@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>honeybee — programs that actually pay</title>
+<meta name="description" content="Bug bounty opportunity intelligence for mid-level hunters. Ranked on payout reliability, crowding and your own stack.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..750&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 28,10 28,22 16,29 4,22 4,10' fill='none' stroke='%237dc894' stroke-width='2.5'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#7dc894" stroke-width="2.5"/>
+      </svg>
+      honeybee
+      <span class="tag">beta</span>
+    </div>
+
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#" data-tab-link="ranked" class="active">Ranked</a>
+      <a href="#" data-tab-link="catalog">Catalog</a>
+      <a href="#foot">Method</a>
+    </nav>
+
+    <div class="spacer"></div>
+    <span class="meta" id="meta">loading…</span>
+    <span id="profile-pill"></span>
+    <button class="btn primary stamp" id="tune-btn">Tune for me</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">
+      <span class="mark">✳</span> <span id="hero-count">220</span> public programs · refreshed every 6 hours
+    </div>
+    <h1>Programs that <em>actually</em> pay.</h1>
+    <p class="hero-lede">
+      Most tools rank bug bounties by reward and freshness. honeybee ranks them by
+      whether the programme responds, resolves and pays — then tilts the list toward
+      the surface you can actually test.
+    </p>
+    <div class="hero-rule"><span class="dash"></span> signals · not vibes</div>
+  </section>
+
+  <section class="stats" id="stats"></section>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="ranked" role="tab">
+      Ranked <span class="count" id="count-ranked">—</span>
+    </button>
+    <button class="tab" data-tab="catalog" role="tab">
+      Catalog <span class="count" id="count-catalog">soon</span>
+    </button>
+  </nav>
+
+  <div class="controls" id="controls">
+    <input class="search" id="search" type="search" placeholder="Search program, company, or in-scope asset…" autocomplete="off">
+    <select id="filter-pay" title="Will they pay">
+      <option value="all">Any payout signal</option>
+      <option value="green">Pays reliably</option>
+      <option value="yellow">Pays slowly / missed targets</option>
+      <option value="red">Risky</option>
+    </select>
+    <select id="sort" title="Sort">
+      <option value="fit">Best fit</option>
+      <option value="lowcomp">Lowest competition</option>
+      <option value="newest">Newest</option>
+      <option value="payout">Highest paid (90d)</option>
+      <option value="scope">Largest scope</option>
+    </select>
+  </div>
+
+  <div id="list" class="list"></div>
+
+  <p class="foot" id="foot"></p>
+</main>
+
+<!-- profile modal -->
+<div class="modal" id="modal">
+  <div class="modal-bg" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h2 id="modal-title">Tune honeybee to you</h2>
+    <p class="lede">
+      Everything here stays in your browser. With a profile the ranking shifts toward
+      programmes whose surface you can actually test.
+    </p>
+
+    <div class="fieldset">
+      <h3>What can you test?</h3>
+      <div class="sliders" id="surface-sliders"></div>
+    </div>
+
+    <div class="fieldset">
+      <h3>How much time do you have?</h3>
+      <div class="sliders">
+        <div class="slider">
+          <span>Hours / week</span>
+          <input type="range" id="hours" min="2" max="40" step="2" value="10">
+          <span class="sv" id="hours-v">10</span>
+        </div>
+        <div class="slider">
+          <span>Session length</span>
+          <input type="range" id="session" min="1" max="8" step="1" value="3">
+          <span class="sv" id="session-v">3h</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fieldset">
+      <h3>What are you optimising for?</h3>
+      <div class="chips" id="goal-chips">
+        <span class="chip on" data-goal="first_bounty">First bounty</span>
+        <span class="chip" data-goal="income">Steady income</span>
+        <span class="chip" data-goal="learning">Learning</span>
+      </div>
+    </div>
+
+    <div class="fieldset">
+      <h3>What do you have?</h3>
+      <div class="chips" id="tool-chips">
+        <span class="chip" data-tool="burp_pro">Burp Pro</span>
+        <span class="chip" data-tool="collaborator">OOB / Collaborator</span>
+        <span class="chip" data-tool="mobile_proxy">Mobile proxy setup</span>
+        <span class="chip" data-tool="vps">VPS</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn ghost" id="reset-profile">Clear</button>
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn primary" id="save-profile">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
