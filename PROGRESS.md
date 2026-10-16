@@ -122,6 +122,20 @@ Known source defects (handled, not hidden):
 | 6 | AI-slop badge labelled `experimental` | Proxy only; becomes real after 2–4 weeks of snapshot history |
 | 7 | `engine.js` kept dependency-free | Reusable in Weven without a framework or build step |
 
+### 2026-10-20 - UI v2: top-10 board, comparison, quick filters
+- Added a "Your top 10" board above the tabs: rank, payout badge, score bar,
+  percentile and the three numbers that matter (reports/90d, response, paid).
+  It re-renders with the profile, so it is personalised, not a static leaderboard.
+- Added program comparison: tick up to 4 rows (or use the card buttons), a sticky
+  tray appears, and the modal diffs score, crowding, scope, response, payout, age,
+  slop and surface mix. Winners are only highlighted when the margin is meaningful,
+  so a 0.02 vs 0.02 slop tie is not presented as a win. CSV export of the selection.
+- Quick filter chips replace the payout dropdown: pays reliably / missed targets /
+  risky / low crowding / fresh / large scope.
+- Clicking a top-10 card clears filters, expands that row and scrolls to it.
+- Will-They-Pay distribution bar + legend under the stats.
+- Keyboard: `/` focuses search, `Esc` closes modals.
+
 ---
 
 ## Next

@@ -52,6 +52,19 @@
   </section>
 
   <section class="stats" id="stats"></section>
+  <div class="tierbar" id="tierbar" title="Will They Pay distribution"></div>
+  <div class="tierlegend" id="tierlegend"></div>
+
+  <section class="top10" id="top10">
+    <div class="section-head">
+      <div>
+        <div class="label">Your top 10</div>
+        <h2>Best matches right now</h2>
+      </div>
+      <div class="section-note" id="top10-note">population ranking · add a profile to personalise</div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
 
   <nav class="tabs" role="tablist">
     <button class="tab active" data-tab="ranked" role="tab">
@@ -64,12 +77,6 @@
 
   <div class="controls" id="controls">
     <input class="search" id="search" type="search" placeholder="Search program, company, or in-scope asset…" autocomplete="off">
-    <select id="filter-pay" title="Will they pay">
-      <option value="all">Any payout signal</option>
-      <option value="green">Pays reliably</option>
-      <option value="yellow">Pays slowly / missed targets</option>
-      <option value="red">Risky</option>
-    </select>
     <select id="sort" title="Sort">
       <option value="fit">Best fit</option>
       <option value="lowcomp">Lowest competition</option>
@@ -79,10 +86,45 @@
     </select>
   </div>
 
+  <div class="quick" id="quick">
+    <button class="quickchip active" data-quick="all">All</button>
+    <button class="quickchip" data-quick="green">Pays reliably</button>
+    <button class="quickchip" data-quick="missed">Missed targets</button>
+    <button class="quickchip" data-quick="red">Risky</button>
+    <button class="quickchip" data-quick="lowcomp">Low crowding</button>
+    <button class="quickchip" data-quick="fresh">Fresh &lt; 12mo</button>
+    <button class="quickchip" data-quick="bigscope">Large scope</button>
+  </div>
+
   <div id="list" class="list"></div>
 
   <p class="foot" id="foot"></p>
 </main>
+
+<!-- compare tray -->
+<div class="tray" id="tray">
+  <div class="tray-inner">
+    <span class="tray-label">Compare</span>
+    <div class="tray-items" id="tray-items"></div>
+    <div class="spacer"></div>
+    <button class="btn ghost sm" id="clear-compare">Clear</button>
+    <button class="btn primary" id="open-compare">Compare <span id="compare-count">2</span></button>
+  </div>
+</div>
+
+<!-- compare modal -->
+<div class="modal" id="compare-modal">
+  <div class="modal-bg" id="compare-bg"></div>
+  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="compare-title">
+    <div class="compare-head">
+      <h2 id="compare-title">Side by side</h2>
+      <div class="spacer"></div>
+      <button class="btn sm" id="export-csv">Export CSV</button>
+      <button class="btn ghost sm" id="close-compare">Close</button>
+    </div>
+    <div id="compare-body"></div>
+  </div>
+</div>
 
 <!-- profile modal -->
 <div class="modal" id="modal">
