@@ -152,6 +152,30 @@ Known source defects (handled, not hidden):
 - Verified: no console errors, no horizontal overflow at 985px, all 9 row cells fit
   at every breakpoint, compare/tabs/profile dialog working.
 
+### 2026-10-20 - Personalisation engine v2
+- Removed the blue banner under the app bar.
+- Engine rewritten (`public/engine.js`, schema v2): experience level (scales all
+  self-assessments: beginner ×0.5, intermediate ×0.85, advanced ×1.0), bounded
+  influence (personalisation moves a score by at most ±12 points), completeness
+  ramp (personal weight = 15% × profile completeness), tools that amplify
+  existing surfaces instead of inventing skill, time gating for short sessions
+  on huge scopes, top-2 share-weighted surface penalties.
+- First-visit onboarding: skill-level question (Beginner / Intermediate /
+  Advanced) seeds a full v2 profile. Beginners get a "very crowded" marker on
+  the top third of competition (crowding ≥ 5/asset/mo or ≥ 900 reports/90d -
+  Stripe, GitHub, Shopify territory). Warning, not a filter.
+- Explainability: every expanded row now shows a "Your fit" block with
+  per-surface shares, effective proficiency, mismatch penalty, stack match and
+  the capped delta vs population. Rows carry compact match notes
+  ("web 98% outside"). The profile dialog shows the exact weight shift per goal.
+- Skill gap analysis in the right rail: for each weak surface, how many
+  programs would enter the top 50 if practiced to 3/5, with median score.
+- Migration and hardening: `migrateProfile()` clamps every field, upgrades v1,
+  tolerates corrupt localStorage. 27 assertions in `public/engine.test.js`
+  (run: `node public/engine.test.js`) covering bounds, monotonicity, cold start,
+  ramp, tool logic, level factor, breakdown sums, gaps, beginner guard, time gate.
+- Profile pill shows level and strength ("Beginner · 80% strength").
+
 ---
 
 ## Next

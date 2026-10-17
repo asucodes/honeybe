@@ -60,6 +60,7 @@
     renderProfilePill();
     tickClock();
     bumpVisits();
+    maybeOnboard();
     fetch("data/programs.json")
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
@@ -86,6 +87,20 @@
           ". Run <code>python -m pipeline.run</code> then reload.</p></div>";
         $("#meta").textContent = "offline";
       });
+  }
+
+  function maybeOnboard() {
+    var modal = $("#onboard");
+    if (!modal) return;
+    var seen = false;
+    try { seen = !!localStorage.getItem("honeybee.onboarded"); } catch (e) {}
+    if (state.profile || seen) return;
+    modal.classList.add("open");
+  }
+
+  function closeOnboard() {
+    $("#onboard").classList.remove("open");
+    try { localStorage.setItem("honeybee.onboarded", "1"); } catch (e) {}
   }
 
   function when(iso) {
@@ -122,12 +137,13 @@
   function loadProfile() {
     try {
       var raw = localStorage.getItem(PROFILE_KEY);
-      state.profile = raw ? JSON.parse(raw) : null;
+      state.profile = raw ? window.HBE.migrateProfile(JSON.parse(raw)) : null;
     } catch (e) { state.profile = null; }
   }
 
   function saveProfile(profile) {
     state.profile = profile;
+    state.gapCache = null;
     try {
       if (profile) localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
       else localStorage.removeItem(PROFILE_KEY);
@@ -137,9 +153,10 @@
 
   function renderProfilePill() {
     var el = $("#profile-pill");
-    el.innerHTML = window.HBE.hasProfile(state.profile)
-      ? '<span class="profile-pill">tuned to you</span>'
-      : "";
+    if (!window.HBE.hasProfile(state.profile)) { el.innerHTML = ""; return; }
+    var lvl = window.HBE.LEVEL_LABELS[state.profile.capability.level] || "Intermediate";
+    var pct = Math.round(window.HBE.completeness(state.profile) * 100);
+    el.innerHTML = '<span class="profile-pill">' + esc(lvl) + " · " + pct + "% strength</span>";
   }
 
   /* ---------------- stats ---------------- */
@@ -217,7 +234,8 @@
     var note = $("#top10-note");
     if (note) {
       note.textContent = personalised
-        ? "personalised · 15% stack match"
+        ? "personalised · " + Math.round(window.HBE.completeness(state.profile) * 100) +
+          "% strength · moves a score by at most ±" + window.HBE.MAX_DELTA
         : "population ranking · add a profile to personalise";
     }
 
@@ -374,6 +392,40 @@
       }).join("");
     }
     renderRailCompare();
+    renderGaps();
+  }
+
+  function renderGaps() {
+    var block = $("#rail-gap-block");
+    if (!block) return;
+    var el = $("#rail-gaps");
+    if (!el) return;
+
+    if (!window.HBE.hasProfile(state.profile)) {
+      block.style.display = "none";
+      state.gapCache = null;
+      return;
+    }
+    block.style.display = "";
+
+    if (!state.gapCache && state.programs.length) {
+      state.gapCache = window.HBE.skillGap(state.programs, state.profile);
+    }
+    var gaps = state.gapCache || [];
+
+    if (!gaps.length) {
+      el.innerHTML = '<p class="rail-empty">No clear gaps left. Practice what you already know.</p>';
+      return;
+    }
+
+    el.innerHTML = gaps.map(function (g) {
+      return '<div class="gap-item">' +
+        '<div class="gap-head"><b>' + esc(g.surface) + "</b> → 3/5</div>" +
+        '<div class="gap-body">' + g.count + " program" + (g.count === 1 ? "" : "s") +
+          " would enter your top 50 · median " + g.median.toFixed(1) + "</div>" +
+        (g.example ? '<div class="gap-example">e.g. ' + esc(g.example.name) + "</div>" : "") +
+        "</div>";
+    }).join("");
   }
 
   function renderRailCompare() {
@@ -407,6 +459,23 @@
     var sub = ["HackerOne", age(s.age_months), nf(s.scope_count) + " assets",
       slop.label !== "none" ? "slop " + slop.label : null].filter(Boolean).join(" · ");
 
+    var matchNote = "";
+    if (window.HBE.hasProfile(state.profile)) {
+      var b = window.HBE.matchBreakdown(p, state.profile);
+      if (b.total && b.surfaces.length) {
+        var top = b.surfaces[0];
+        var bucket = top.eff >= 4 ? "match" : top.eff >= 2 ? "partial" : "outside";
+        matchNote = top.surface + " " + Math.round(top.share * 100) + "% " + bucket;
+        if (b.surfaces.length > 1 && b.surfaces[1].eff < 2 && b.surfaces[1].share >= 0.15) {
+          matchNote += " · " + b.surfaces[1].surface + " " + Math.round(b.surfaces[1].share * 100) + "% outside";
+        }
+      }
+    }
+
+    var crowd = window.HBE.crowdedForBeginner(p, state.profile)
+      ? ' <span class="crowd-note" title="Heavy competition. Most accepted reports here come from experienced hunters.">very crowded</span>'
+      : "";
+
     return (
       '<div class="row' + (open ? " open" : "") + '" data-id="' + esc(p.id) + '">' +
         '<div class="row-main">' +
@@ -414,7 +483,9 @@
           '<div class="rank">' + row.rank + "</div>" +
           '<div class="pname">' +
             '<div class="n"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + "</a></div>" +
-            '<div class="sub">' + esc(sub) + "</div>" +
+            '<div class="sub">' + esc(sub) +
+              (matchNote ? ' <span class="match-note">' + esc(matchNote) + "</span>" : "") +
+              crowd + "</div>" +
           "</div>" +
           '<div class="scorecell">' +
             '<span class="num">' + row.score.toFixed(1) + "</span>" +
@@ -464,6 +535,7 @@
       ? '<div class="reason neutral">showing 240 of ' + nf(p.scope.length) + " assets</div>" : "";
 
     return '<div class="reasons">' + reasons + penalties + "</div>" +
+      matchBlock(p) +
       surfaceMix(p) +
       '<div class="bars">' + bars + "</div>" +
       '<div class="scope-head"><h4>In scope</h4>' +
@@ -472,6 +544,40 @@
         '<span class="reason neutral">' + esc(p.badges.will_pay.why) + "</span>" +
       "</div>" +
       '<div class="scope-grid">' + (scope || '<span class="scope-item">no scope published</span>') + "</div>" + more;
+  }
+
+  /* Personalization explanation for one program, plain numbers. */
+  function matchBlock(p) {
+    if (!window.HBE.hasProfile(state.profile)) return "";
+    var b = window.HBE.matchBreakdown(p, state.profile);
+    if (!b.total || !b.surfaces.length) return "";
+
+    var rows = b.surfaces.slice(0, 4).map(function (s) {
+      var cls = s.eff >= 4 ? "good" : s.eff >= 2 ? "neutral" : "bad";
+      var bucket = s.eff >= 4 ? "match" : s.eff >= 2 ? "partial" : "outside";
+      return '<div class="mline">' +
+        '<span class="msurface">' + esc(s.surface) + "</span>" +
+        '<span class="mshare">' + Math.round(s.share * 100) + '% of scope</span>' +
+        '<span class="mskill reason ' + cls + '">' + esc(bucket) + " · " + s.eff.toFixed(1) + "/5</span>" +
+        "</div>";
+    }).join("");
+
+    var penalty = window.HBE.mismatchPenalty(p, state.profile);
+    var delta = window.HBE.curatedScore(p, state.profile) - p.score.total;
+    var deltaLine = Math.abs(delta) < 0.05
+      ? "no net change"
+      : (delta > 0 ? "+" : "−") + Math.abs(delta).toFixed(1) + " points vs population";
+
+    return '<div class="matchblock">' +
+      '<div class="matchblock-head">Your fit' +
+        '<span class="matchblock-delta">' + esc(deltaLine) + " (cap ±" + window.HBE.MAX_DELTA + ")</span>" +
+      "</div>" +
+      rows +
+      (penalty ? '<div class="matchblock-note">surface mismatch penalty: ' + penalty.toFixed(1) + " points</div>" : "") +
+      '<div class="matchblock-note">stack match ' + Math.round(window.HBE.stackMatch(p, state.profile) * 100) +
+        "/100 of this scope is at your effective skill · profile " +
+        Math.round(window.HBE.completeness(state.profile) * 100) + "% strength</div>" +
+      "</div>";
   }
 
   /* ---------------- compare ---------------- */
@@ -752,6 +858,22 @@
 
     $$("[data-close]").forEach(function (el) { el.addEventListener("click", closeModal); });
 
+    var onboard = $("#onboard");
+    if (onboard) {
+      onboard.addEventListener("click", function (e) {
+        var opt = e.target.closest(".onboard-option");
+        if (opt) {
+          saveProfile(window.HBE.emptyProfile(Number(opt.getAttribute("data-level"))));
+          closeOnboard();
+          renderStats();
+          renderTop10();
+          render();
+          return;
+        }
+        if (e.target.closest("[data-close-onboard]")) closeOnboard();
+      });
+    }
+
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { closeModal(); closeCompare(); }
       if (e.key === "/" && document.activeElement !== $("#search")) {
@@ -761,7 +883,7 @@
     });
 
     $("#save-profile").addEventListener("click", function () {
-      saveProfile(readModal());
+      saveProfile(window.HBE.migrateProfile(readModal()));
       closeModal();
       renderStats();
       renderTop10();
@@ -788,13 +910,28 @@
     $("#hours-v").textContent = draft.constraints.hours_per_week;
     $("#session").value = draft.constraints.session_hours;
     $("#session-v").textContent = draft.constraints.session_hours + "h";
+    $$("#level-chips .chip").forEach(function (c) {
+      c.classList.toggle("on", Number(c.getAttribute("data-level")) === Number(draft.capability.level));
+    });
     $$("#goal-chips .chip").forEach(function (c) {
       c.classList.toggle("on", c.getAttribute("data-goal") === draft.preferences.goal);
     });
     $$("#tool-chips .chip").forEach(function (c) {
       c.classList.toggle("on", !!draft.constraints.tools[c.getAttribute("data-tool")]);
     });
+    updateGoalShiftNote(draft.preferences.goal);
     $("#modal").classList.add("open");
+  }
+
+  var GOAL_SHIFTS = {
+    first_bounty: "Weight shift: crowding ×1.35, scope breadth ×0.65, value ×0.85 — clear runway over jackpot odds.",
+    income: "Weight shift: payout reliability ×1.45, crowding ×1.10 — proven payers over long shots.",
+    learning: "Weight shift: value per competition ×0.80, triage quality ×1.10 — programs that resolve and give feedback.",
+  };
+
+  function updateGoalShiftNote(goal) {
+    var el = $("#goal-shift-note");
+    if (el) el.textContent = GOAL_SHIFTS[goal] || GOAL_SHIFTS.first_bounty;
   }
 
   function closeModal() { $("#modal").classList.remove("open"); }
@@ -834,11 +971,18 @@
   });
 
   document.addEventListener("click", function (e) {
+    var level = e.target.closest("#level-chips .chip");
+    if (level && draft) {
+      $$("#level-chips .chip").forEach(function (c) { c.classList.remove("on"); });
+      level.classList.add("on");
+      draft.capability.level = Number(level.getAttribute("data-level"));
+    }
     var goal = e.target.closest("#goal-chips .chip");
     if (goal && draft) {
       $$("#goal-chips .chip").forEach(function (c) { c.classList.remove("on"); });
       goal.classList.add("on");
       draft.preferences.goal = goal.getAttribute("data-goal");
+      updateGoalShiftNote(draft.preferences.goal);
     }
     var tool = e.target.closest("#tool-chips .chip");
     if (tool && draft) {

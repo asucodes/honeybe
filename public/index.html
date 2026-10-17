@@ -49,11 +49,6 @@
   </div>
 </header>
 
-<div class="banner">
-  <div class="banner-inner">Ranked on whether a program actually responds, resolves and pays</div>
-</div>
-
-<!-- ===================== SHELL ===================== -->
 <div class="shell">
 
   <!-- ---------- left nav ---------- -->
@@ -143,14 +138,13 @@
       </summary>
       <div class="callout-body">
         <p>
-          honeybee lists <b><span class="inline-count" id="hero-count-2">220</span> public, paid, open programs</b>
-          and ranks them on payout reliability, crowding, triage quality and scope — the things that decide
-          whether your report turns into money.
+          honeybee ranks <b><span class="inline-count" id="hero-count-2">220</span> public, paid, open HackerOne programs</b>
+          by payout reliability, crowding, triage quality and scope breadth. Data comes from free,
+          unauthenticated sources and refreshes every six hours.
         </p>
         <p>
-          Every program is scored from free, unauthenticated HackerOne signals, refreshed every six hours.
-          Programs we cannot get enough signal for are shown as <em>unknown</em> instead of being given a
-          flattering score.
+          Programs with insufficient signal are marked unknown instead of scored favorably.
+          Missing data never becomes a good score.
         </p>
       </div>
     </details>
@@ -201,6 +195,12 @@
       <div id="rail-compare"></div>
     </div>
 
+    <div class="rail-block" id="rail-gap-block" style="display:none">
+      <h3>Skill gaps</h3>
+      <p class="rail-empty" id="rail-gap-note">If you practiced one more surface, these programs would enter your top 50.</p>
+      <div id="rail-gaps"></div>
+    </div>
+
     <button class="btn primary full js-tune">Tune for me</button>
   </aside>
 </div>
@@ -244,6 +244,16 @@
     </p>
 
     <div class="fieldset">
+      <h3>Experience level</h3>
+      <div class="chips" id="level-chips">
+        <span class="chip" data-level="1">Beginner</span>
+        <span class="chip on" data-level="2">Intermediate</span>
+        <span class="chip" data-level="3">Advanced</span>
+      </div>
+      <p class="hint" id="level-hint">Your level scales every self-assessed skill. A beginner rating of 5 counts as 2.5 in the engine. Be honest — the ranking only helps if it is.</p>
+    </div>
+
+    <div class="fieldset">
       <h3>What can you test?</h3>
       <div class="sliders" id="surface-sliders"></div>
     </div>
@@ -271,6 +281,7 @@
         <span class="chip" data-goal="income">Steady income</span>
         <span class="chip" data-goal="learning">Learning</span>
       </div>
+      <p class="hint" id="goal-shift-note"></p>
     </div>
 
     <div class="fieldset">
@@ -287,6 +298,40 @@
       <button class="btn ghost" id="reset-profile">Clear</button>
       <button class="btn" data-close>Cancel</button>
       <button class="btn primary" id="save-profile">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ONBOARDING DIALOG ===================== -->
+<div class="modal" id="onboard">
+  <div class="modal-bg" data-close-onboard></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
+    <div class="onboard-bee" aria-hidden="true">
+      <svg viewBox="0 0 32 32"><polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#1a73e8" stroke-width="2.6"/><circle cx="16" cy="16" r="3.4" fill="#1a73e8"/></svg>
+    </div>
+    <h2 id="onboard-title">How experienced are you with bug bounties?</h2>
+    <p class="lede">
+      honeybee personalises the ranking to what you can actually test. Pick the closest
+      description — you can change everything later. This stays in your browser.
+    </p>
+
+    <div class="onboard-options">
+      <button class="onboard-option" data-level="1">
+        <b>Beginner</b>
+        <span>I haven't submitted a real bug report yet, or only a few.</span>
+      </button>
+      <button class="onboard-option" data-level="2">
+        <b>Intermediate</b>
+        <span>I've had reports accepted and know my way around a web app.</span>
+      </button>
+      <button class="onboard-option" data-level="3">
+        <b>Advanced</b>
+        <span>I find bugs reliably and I know my strongest surfaces.</span>
+      </button>
+    </div>
+
+    <div class="onboard-actions">
+      <button class="btn ghost" data-close-onboard>Skip for now</button>
     </div>
   </div>
 </div>

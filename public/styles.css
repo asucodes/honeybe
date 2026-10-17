@@ -206,20 +206,6 @@ h1, h2, h3, h4 { color: var(--ink); font-weight: 400; margin: 0; }
 }
 
 /* ==========================================================================
-   blue banner
-   ========================================================================== */
-
-.banner { background: var(--blue); color: #fff; }
-.banner-inner {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 18px 24px;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0.1px;
-}
-
-/* ==========================================================================
    shell
    ========================================================================== */
 
@@ -931,6 +917,99 @@ body.tray-open { padding-bottom: 68px; }
 }
 .foot b { color: var(--ink); font-weight: 500; }
 .method-links { font-size: 14px; color: var(--muted); }
+
+/* ---------- onboarding ---------- */
+
+#onboard .modal-card { max-width: 520px; }
+.onboard-bee { display: flex; justify-content: center; margin-bottom: 14px; }
+.onboard-bee svg { width: 40px; height: 40px; }
+#onboard h2 { text-align: center; font-size: 24px; font-weight: 400; letter-spacing: -0.2px; }
+#onboard .lede { text-align: center; }
+
+.onboard-options { display: flex; flex-direction: column; gap: 10px; margin: 20px 0 8px; }
+.onboard-option {
+  appearance: none;
+  font-family: inherit;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+.onboard-option:hover {
+  border-color: var(--blue);
+  background: var(--blue-l);
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.2);
+}
+.onboard-option b { font-size: 15px; font-weight: 500; color: var(--ink); }
+.onboard-option span { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.onboard-actions { display: flex; justify-content: center; margin-top: 8px; }
+
+/* ---------- profile modal hints ---------- */
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ---------- match block (detail) ---------- */
+
+.matchblock {
+  border: 1px solid var(--border-l);
+  border-radius: var(--r);
+  background: var(--bg);
+  padding: 12px 14px;
+  margin: 0 0 16px;
+  max-width: 560px;
+}
+.matchblock-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.matchblock-delta { font-size: 12px; font-weight: 400; color: var(--muted); }
+
+.mline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  border-top: 1px solid var(--border-l);
+}
+.mline:first-of-type { border-top: none; }
+.msurface { font-size: 13px; color: var(--ink2); text-transform: capitalize; min-width: 96px; }
+.mshare { font-size: 12px; color: var(--muted); min-width: 88px; font-variant-numeric: tabular-nums; }
+.mskill { font-size: 12px; padding: 2px 8px; }
+
+.matchblock-note { font-size: 11.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+/* ---------- row notes ---------- */
+
+.match-note { color: var(--blue-d); }
+.crowd-note { color: var(--amber-fg); }
+
+/* ---------- rail skill gaps ---------- */
+
+.gap-item {
+  border-top: 1px solid var(--border-l);
+  padding: 8px 0;
+}
+.gap-item:first-child { border-top: none; }
+.gap-head { font-size: 13px; color: var(--ink); font-weight: 500; text-transform: capitalize; }
+.gap-body { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.gap-example { font-size: 11.5px; color: var(--muted2); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- animations ---------- */
 

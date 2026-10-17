@@ -98,21 +98,77 @@ This is a **single-snapshot proxy**. The real signal is the derivative — a
 volume spike against a program's own baseline — which needs 2–4 weeks of
 snapshots. The UI labels it experimental and it carries only a −10 penalty.
 
-## Personalisation
+## Personalisation (engine v2)
 
-Runs client-side in `public/engine.js`. 15% of the score becomes stack match
-when a profile exists.
+Runs client-side in `public/engine.js`, schema v2. Guarantees, in order:
+honest, bounded, explainable, monotonic. `engine.test.js` enforces all of them.
+
+### Experience level
+
+On first visit the user picks a level. It scales every self-assessed skill:
 
 ```
-w_i = base_i × preference_i ;  renormalised to (1 − 0.15)
-score = 100 · ( Σ w_i·s_i + 0.15·stack_match )
+effective_proficiency = self_rating × { beginner 0.5, intermediate 0.85, advanced 1.0 }
 ```
 
-`stack_match` maps each scope asset type to a skill surface (web, api, mobile,
-cloud, network, source, hardware, smart_contract, ai) and averages the user's
-self-rated proficiency weighted by asset count.
+A beginner who rates web 5/5 is treated as 2.5/5. This is why a beginner does
+not get pointed at elite programs: their effective skill is below the bar that
+the top third of programs actually require.
 
-Preferences adjust the population weights:
+### Bounded influence
+
+Personalisation is a **delta, capped at ±12 points**, applied to the population
+score:
+
+```
+personal_total = weighted parts + population penalties + surface penalties
+score          = clamp(population + clamp(personal_total − population, −12, +12), 0, 100)
+```
+
+Opinions can reorder; they cannot fabricate a 90.
+
+### Strength ramp
+
+The personal share of the weights is not fixed at 15% — it scales with profile
+completeness (surfaces 0.3, goal 0.25, time 0.25, tools 0.2):
+
+```
+personal_weight = 0.15 × completeness
+```
+
+A half-filled profile applies half-strength personalisation. The pill in the
+header shows the current strength.
+
+### Effective skill and tools
+
+```
+effective = self_rating × level_factor + Σ tool_bumps
+```
+
+Tools only amplify a surface the user already practices (rating > 0), and are
+capped at 5:
+
+| Tool | Bumps |
+|---|---|
+| Burp Pro | web +1, api +1 |
+| OOB / Collaborator | network +1, other +1 |
+| Mobile proxy | mobile +1 |
+| VPS | cloud +1, network +1 |
+
+### Time gate
+
+Short sessions cannot sweep huge scopes, so the scope-breadth component is
+discounted for low-time users on very large programs: session ≤ 2h with ≥ 200
+assets → ×0.75; session ≤ 3h with ≥ 400 assets → ×0.85. Monotonic: more time
+never hurts.
+
+### Surface mismatch penalty
+
+Share-weighted over the top 2 surfaces (dominant surface full weight, second
+at 0.5): effective ≤ 1 → −18 × share; effective = 2 → −8 × share. A program
+that is half web, half mobile still pays for the mobile half.
+
+### Preferences adjust the population weights
 
 | Goal | Effect |
 |---|---|
@@ -120,10 +176,38 @@ Preferences adjust the population weights:
 | Steady income | payout reliability ×1.45, crowding ×1.10 |
 | Learning | value ×0.80, triage ×1.10 |
 
-A program whose dominant surface the user rates 0 gets −18; rated 1 gets −8.
+The exact shift is shown in the profile dialog next to the goal chips.
 
-Cold start works: with no profile, `stack_match = 0` and the weights sum to 1,
-so the personal score equals the population score exactly.
+### Skill gap analysis
+
+For each surface rated ≤ 1: simulate the user learning it to 3/5, re-rank, and
+count how many new programs enter their top 50 (with median score). The top 3
+opportunities appear in the right rail. This is a recommendation to *learn*,
+not to hunt — the ranking still only rewards what you can already test.
+
+### Beginner guard (UI only, no score change)
+
+Level 1 users see a "very crowded" marker on programs with crowding/asset/
+month ≥ 5 or ≥ 900 reports in 90 days — the top third of competition, where
+Stripe, GitHub and Shopify sit. It is a warning, not a filter: hiding programs
+would violate principle 1.
+
+### Cold start
+
+With no profile, `stack_match = 0`, weights sum to 1, and the personal score
+equals the population score exactly — verified by test.
+
+### Profile schema
+
+```
+{ version: 2, capability: { level: 1-3, surfaces: {web: 0-5, ...} },
+  constraints: { hours_per_week, session_hours, tools },
+  preferences: { goal, variance_tolerance }, outcomes: [] }
+```
+
+Stored in `localStorage` only. `migrateProfile()` clamps every field and
+upgrades v1 profiles; corrupt input degrades to no profile. The engine is
+dependency-free and reusable (Weven).
 
 ## Design principles
 
