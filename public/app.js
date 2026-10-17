@@ -58,6 +58,8 @@
     loadProfile();
     bindEvents();
     renderProfilePill();
+    tickClock();
+    bumpVisits();
     fetch("data/programs.json")
       .then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
@@ -66,14 +68,17 @@
       .then(function (data) {
         state.programs = data.programs || [];
         state.meta = data;
-        $("#meta").textContent = nf(state.programs.length) + " programs · " + when(data.generated_at);
-        var heroCount = $("#hero-count");
-        if (heroCount) heroCount.textContent = nf(state.programs.length);
+        $("#meta").textContent = nf(state.programs.length) + " programs · updated " + when(data.generated_at);
+        ["#hero-count", "#hero-count-2"].forEach(function (sel) {
+          var el = $(sel);
+          if (el) el.textContent = nf(state.programs.length);
+        });
         $("#count-ranked").textContent = nf(state.programs.length);
         $("#count-catalog").textContent = "soon";
         renderStats();
         renderTop10();
         render();
+        renderRail();
       })
       .catch(function (err) {
         $("#list").innerHTML =
@@ -90,6 +95,26 @@
     if (mins < 60) return mins + "m ago";
     if (mins < 1440) return Math.round(mins / 60) + "h ago";
     return iso.slice(0, 10);
+  }
+
+  function tickClock() {
+    var el = $("#clock");
+    if (!el) return;
+    var d = new Date();
+    var pad = function (n) { return String(n).padStart(2, "0"); };
+    el.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+    setTimeout(tickClock, 1000);
+  }
+
+  function bumpVisits() {
+    var el = $("#visit-count");
+    if (!el) return;
+    var n = 1;
+    try {
+      n = Number(localStorage.getItem("honeybee.visits") || "0") + 1;
+      localStorage.setItem("honeybee.visits", String(n));
+    } catch (e) { /* private mode */ }
+    el.textContent = String(n).padStart(6, "0");
   }
 
   /* ---------------- profile ---------------- */
@@ -159,15 +184,29 @@
     var legend = $("#tierlegend");
     if (legend) {
       var meta = {
-        green: ["Pays reliably", "var(--accent)"],
-        yellow: ["Pays slowly / missed", "var(--marigold)"],
-        red: ["Risky", "var(--danger)"],
-        unknown: ["Not enough signal", "var(--rule)"],
+        green: ["Pays reliably", "#34a853"],
+        yellow: ["Pays slowly / missed", "#fbbc04"],
+        red: ["Risky", "#ea4335"],
+        unknown: ["Not enough signal", "var(--border)"],
       };
       legend.innerHTML = ["green", "yellow", "red", "unknown"].map(function (t) {
         return '<span><i style="background:' + meta[t][1] + '"></i>' + meta[t][0] + " <b>" + (counts[t] || 0) + "</b></span>";
       }).join("");
     }
+
+    updateChipCounts();
+  }
+
+  function updateChipCounts() {
+    var keys = ["all", "green", "missed", "red", "lowcomp", "fresh", "bigscope"];
+    var n = { all: state.programs.length };
+    keys.slice(1).forEach(function (k) {
+      n[k] = state.programs.filter(function (p) { return quickMatch(p, k); }).length;
+    });
+    keys.forEach(function (k) {
+      var el = document.querySelector('[data-cnt="' + k + '"]');
+      if (el) el.textContent = nf(n[k]);
+    });
   }
 
   /* ---------------- top 10 ---------------- */
@@ -199,15 +238,15 @@
             '<span class="card-bar"><i style="width:' + Math.min(100, row.score) + '%"></i></span>' +
             '<span class="card-pct">top ' + Math.max(1, Math.round(100 - row.percentile)) + "%</span>" +
           "</div>" +
-          '<div class="card-metrics">' +
-            "<span><b>" + nf(s.reports_90d) + "</b> r/90d</span>" +
-            "<span><b>" + pct(s.response_efficiency) + "</b> resp</span>" +
-            "<span><b>" + money(s.paid_90d) + "</b> paid</span>" +
-          "</div>" +
+          '<dl class="card-metrics">' +
+            "<div><dt>Reports / 90d</dt><dd>" + nf(s.reports_90d) + "</dd></div>" +
+            "<div><dt>Response</dt><dd>" + pct(s.response_efficiency) + "</dd></div>" +
+            "<div><dt>Paid 90d</dt><dd>" + money(s.paid_90d) + "</dd></div>" +
+          "</dl>" +
           '<div class="card-foot">' +
             '<button class="card-cmp' + (on ? " on" : "") + '" data-cmp="' + esc(p.id) + '">' +
-              (on ? "Selected" : "+ Compare") + "</button>" +
-            '<a class="card-open" href="' + esc(p.url) + '" target="_blank" rel="noopener">open ↗</a>' +
+              (on ? "Selected" : "Compare") + "</button>" +
+            '<a class="card-open" href="' + esc(p.url) + '" target="_blank" rel="noopener">HackerOne ↗</a>' +
           "</div>" +
         "</article>"
       );
@@ -258,17 +297,30 @@
     return rows;
   }
 
+  function setTab(name) {
+    state.tab = name;
+    $$("[data-tab-link]").forEach(function (el) {
+      el.classList.toggle("active", el.getAttribute("data-tab-link") === name);
+    });
+    var crumb = $("#crumb-current");
+    if (crumb) crumb.textContent = name === "catalog" ? "Catalog" : "Programs";
+    render();
+  }
+
   function render() {
-    var top10 = $("#top10");
+    var top10 = $("#top10-section");
     if (top10) top10.style.display = state.tab === "catalog" ? "none" : "";
+    var note = $("#top10-note");
+    if (note) note.style.display = state.tab === "catalog" ? "none" : "";
 
     if (state.tab === "catalog") {
       $("#controls").style.display = "none";
       $("#quick").style.display = "none";
       $("#list").innerHTML =
         '<div class="empty"><h3>Catalog is next</h3>' +
-        "<p>3,300+ programmes from lissy93, rix4uni and arkadiyt — every field we have, " +
+        "<p>3,300+ programs from lissy93, rix4uni and arkadiyt — every field we have, " +
         "with explicit gaps. Nothing here is scored.</p></div>";
+      renderRail();
       return;
     }
 
@@ -280,7 +332,8 @@
     if (countEl) countEl.textContent = nf(rows.length) + (rows.length !== state.programs.length ? "/" + nf(state.programs.length) : "");
 
     if (!rows.length) {
-      $("#list").innerHTML = '<div class="empty"><h3>No programmes match</h3><p>Loosen the filters or clear the search.</p></div>';
+      $("#list").innerHTML = '<div class="empty"><h3>No programs match</h3><p>Loosen the filters or clear the search.</p></div>';
+      renderRail();
       return;
     }
 
@@ -293,6 +346,54 @@
         ? "15% of the score is your personal stack match."
         : "Add a profile to fold in your own stack match.") +
       "<br><b>Slop risk is experimental</b> — it needs a few weeks of snapshots to become a real signal.";
+    renderRail();
+  }
+
+  /* ---------------- right rail ---------------- */
+
+  function renderRail() {
+    var el = $("#rail-stats");
+    if (el) {
+      var rows = window.HBE.rescore(state.programs, state.profile);
+      var scores = rows.map(function (r) { return r.score; });
+      var median = scores.length ? scores[Math.floor(scores.length / 2)] : 0;
+      var green = state.programs.filter(function (p) { return p.badges.will_pay.tier === "green"; }).length;
+      var assets = state.programs.reduce(function (n, p) { return n + (p.signals.scope_count || 0); }, 0);
+      var fresh = state.programs.filter(function (p) { return (p.signals.age_months || 999) < 12; }).length;
+      var top = rows[0];
+      el.innerHTML = [
+        ["Programs", nf(state.programs.length)],
+        ["Median score", median.toFixed(1)],
+        ["Pays reliably", nf(green)],
+        ["Scope assets", nf(assets)],
+        ["Opened < 12mo", nf(fresh)],
+        ["Top match", top ? top.program.name : "—"],
+        ["Updated", state.meta ? when(state.meta.generated_at) : "—"],
+      ].map(function (r) {
+        return '<div class="rail-stat"><span class="lbl">' + esc(r[0]) + '</span><span class="val">' + esc(r[1]) + "</span></div>";
+      }).join("");
+    }
+    renderRailCompare();
+  }
+
+  function renderRailCompare() {
+    var el = $("#rail-compare");
+    if (!el) return;
+    var items = Array.from(state.compare).map(byId).filter(Boolean);
+
+    if (!items.length) {
+      el.innerHTML = '<p class="rail-empty">Tick a program in the list, or press Compare on a card, to line up to four side by side.</p>';
+      return;
+    }
+
+    el.innerHTML = items.map(function (p) {
+      return '<div class="rail-cmp-item"><span>' + esc(p.name) + '</span>' +
+        '<button data-uncmp="' + esc(p.id) + '" aria-label="Remove">×</button></div>';
+    }).join("") +
+      '<button class="btn primary full" id="rail-compare-btn"' + (items.length < 2 ? " disabled" : "") + ">Compare " + items.length + "</button>";
+
+    var btn = document.getElementById("rail-compare-btn");
+    if (btn) btn.addEventListener("click", openCompare);
   }
 
   function rowHtml(row) {
@@ -396,9 +497,10 @@
       var btn = card.querySelector(".card-cmp");
       if (btn) {
         btn.classList.toggle("on", on);
-        btn.textContent = on ? "Selected" : "+ Compare";
+        btn.textContent = on ? "Selected" : "Compare";
       }
     });
+    renderRailCompare();
   }
 
   function renderTray() {
@@ -408,10 +510,11 @@
     document.body.classList.toggle("tray-open", items.length > 0);
     $("#compare-count").textContent = items.length;
     $("#tray-items").innerHTML = items.map(function (p) {
-      return '<span class="tray-item">' + esc(p.name) +
+      return '<span class="tray-item"><span>' + esc(p.name) + "</span>" +
         '<button data-uncmp="' + esc(p.id) + '" aria-label="Remove">×</button></span>';
     }).join("");
     $("#open-compare").disabled = items.length < 2;
+    renderRailCompare();
   }
 
   /** From a top-10 card: clear filters, expand that row and scroll to it. */
@@ -438,7 +541,7 @@
     if (!label) return;
     var old = label.textContent;
     label.textContent = msg;
-    label.style.color = "var(--marigold)";
+    label.style.color = "var(--amber-fg)";
     setTimeout(function () {
       label.textContent = old;
       label.style.color = "";
@@ -547,7 +650,8 @@
   function bindEvents() {
     $("#search").addEventListener("input", function (e) {
       state.search = e.target.value.trim();
-      render();
+      if (state.search && state.tab !== "ranked") setTab("ranked");
+      else render();
     });
 
     $("#sort").addEventListener("change", function (e) {
@@ -618,24 +722,32 @@
 
     $$(".tab").forEach(function (tab) {
       tab.addEventListener("click", function () {
-        $$(".tab").forEach(function (t) { t.classList.remove("active"); });
-        tab.classList.add("active");
-        state.tab = tab.getAttribute("data-tab");
-        render();
+        setTab(tab.getAttribute("data-tab"));
       });
     });
 
-    $("#tune-btn").addEventListener("click", openModal);
-
-    $$(".nav-links a[data-tab-link]").forEach(function (link) {
-      link.addEventListener("click", function (e) {
+    $$("[data-tab-link]").forEach(function (el) {
+      el.addEventListener("click", function (e) {
         e.preventDefault();
-        var target = link.getAttribute("data-tab-link");
-        var tab = document.querySelector('.tab[data-tab="' + target + '"]');
-        if (tab) tab.click();
-        $$(".nav-links a").forEach(function (a) { a.classList.remove("active"); });
-        link.classList.add("active");
+        var target = el.getAttribute("data-tab-link");
+        if (target === "method") {
+          var anchor = document.getElementById("method");
+          if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        setTab(target);
       });
+    });
+
+    $$(".js-tune").forEach(function (el) {
+      el.addEventListener("click", function () { openModal(); });
+    });
+
+    $("#copy-link").addEventListener("click", function () {
+      var btn = this;
+      navigator.clipboard.writeText(window.location.href);
+      btn.title = "Link copied";
+      setTimeout(function () { btn.title = "Copy a link to this view"; }, 1400);
     });
 
     $$("[data-close]").forEach(function (el) { el.addEventListener("click", closeModal); });

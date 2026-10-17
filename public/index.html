@@ -7,116 +7,220 @@
 <meta name="description" content="Bug bounty opportunity intelligence for mid-level hunters. Ranked on payout reliability, crowding and your own stack.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400..750&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 28,10 28,22 16,29 4,22 4,10' fill='none' stroke='%237dc894' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 28,10 28,22 16,29 4,22 4,10' fill='none' stroke='%231a73e8' stroke-width='3'/%3E%3C/svg%3E">
 </head>
-<body>
+<body id="top">
 
-<header class="topbar">
-  <div class="wrap topbar-inner">
-    <div class="brand">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#7dc894" stroke-width="2.5"/>
+<!-- ===================== APP BAR ===================== -->
+<header class="appbar">
+  <div class="appbar-inner">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#1a73e8" stroke-width="2.6"/>
+        <circle cx="16" cy="16" r="3.4" fill="#1a73e8"/>
       </svg>
-      honeybee
-      <span class="tag">beta</span>
-    </div>
+      <span class="brand-text">
+        <span class="brand-name">honeybee</span>
+        <span class="brand-sub">bug bounty intelligence</span>
+      </span>
+    </a>
 
-    <nav class="nav-links" aria-label="Sections">
-      <a href="#" data-tab-link="ranked" class="active">Ranked</a>
-      <a href="#" data-tab-link="catalog">Catalog</a>
-      <a href="#foot">Method</a>
+    <nav class="appnav" aria-label="Sections">
+      <button class="appnav-link active" data-tab-link="ranked">Ranked</button>
+      <button class="appnav-link" data-tab-link="catalog">Catalog</button>
+      <button class="appnav-link" data-tab-link="method">Method</button>
     </nav>
 
-    <div class="spacer"></div>
-    <span class="meta" id="meta">loading…</span>
+    <div class="appbar-search">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input id="search" type="search" placeholder="Search programs" autocomplete="off" aria-label="Search programs">
+      <kbd>/</kbd>
+    </div>
+
+    <span class="appbar-meta" id="meta">loading…</span>
     <span id="profile-pill"></span>
-    <button class="btn primary stamp" id="tune-btn">Tune for me</button>
+    <button class="btn-text js-tune" id="tune-btn">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+      Tune for me
+    </button>
+    <span class="avatar" aria-hidden="true">🐝</span>
   </div>
 </header>
 
-<main class="wrap">
+<div class="banner">
+  <div class="banner-inner">Ranked on whether a program actually responds, resolves and pays</div>
+</div>
 
-  <section class="hero">
-    <div class="eyebrow">
-      <span class="mark">✳</span> <span id="hero-count">220</span> public programs · refreshed every 6 hours
-    </div>
-    <h1>Programs that <em>actually</em> pay.</h1>
-    <p class="hero-lede">
-      Most tools rank bug bounties by reward and freshness. honeybee ranks them by
-      whether the programme responds, resolves and pays — then tilts the list toward
-      the surface you can actually test.
-    </p>
-    <div class="hero-rule"><span class="dash"></span> signals · not vibes</div>
-  </section>
+<!-- ===================== SHELL ===================== -->
+<div class="shell">
 
-  <section class="stats" id="stats"></section>
-  <div class="tierbar" id="tierbar" title="Will They Pay distribution"></div>
-  <div class="tierlegend" id="tierlegend"></div>
-
-  <section class="top10" id="top10">
-    <div class="section-head">
-      <div>
-        <div class="label">Your top 10</div>
-        <h2>Best matches right now</h2>
+  <!-- ---------- left nav ---------- -->
+  <aside class="sidenav">
+    <div class="side-block">
+      <div class="side-title">Sort by</div>
+      <div class="controls" id="controls">
+        <select id="sort" aria-label="Sort programs">
+          <option value="fit">Best fit</option>
+          <option value="lowcomp">Lowest competition</option>
+          <option value="newest">Newest</option>
+          <option value="payout">Highest paid (90d)</option>
+          <option value="scope">Largest scope</option>
+        </select>
       </div>
-      <div class="section-note" id="top10-note">population ranking · add a profile to personalise</div>
     </div>
-    <div class="cards" id="cards"></div>
-  </section>
 
-  <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="ranked" role="tab">
-      Ranked <span class="count" id="count-ranked">—</span>
-    </button>
-    <button class="tab" data-tab="catalog" role="tab">
-      Catalog <span class="count" id="count-catalog">soon</span>
-    </button>
-  </nav>
+    <div class="side-block">
+      <div class="side-title">Quick filters</div>
+      <div class="quick" id="quick">
+        <button class="quickchip active" data-quick="all">All programs <span class="chip-cnt" data-cnt="all"></span></button>
+        <button class="quickchip" data-quick="green">Pays reliably <span class="chip-cnt" data-cnt="green"></span></button>
+        <button class="quickchip" data-quick="missed">Missed targets <span class="chip-cnt" data-cnt="missed"></span></button>
+        <button class="quickchip" data-quick="red">Risky <span class="chip-cnt" data-cnt="red"></span></button>
+        <button class="quickchip" data-quick="lowcomp">Low crowding <span class="chip-cnt" data-cnt="lowcomp"></span></button>
+        <button class="quickchip" data-quick="fresh">Fresh &lt; 12mo <span class="chip-cnt" data-cnt="fresh"></span></button>
+        <button class="quickchip" data-quick="bigscope">Large scope <span class="chip-cnt" data-cnt="bigscope"></span></button>
+      </div>
+    </div>
 
-  <div class="controls" id="controls">
-    <input class="search" id="search" type="search" placeholder="Search program, company, or in-scope asset…" autocomplete="off">
-    <select id="sort" title="Sort">
-      <option value="fit">Best fit</option>
-      <option value="lowcomp">Lowest competition</option>
-      <option value="newest">Newest</option>
-      <option value="payout">Highest paid (90d)</option>
-      <option value="scope">Largest scope</option>
-    </select>
-  </div>
+    <div class="side-block">
+      <div class="side-title">Views</div>
+      <nav class="side-nav">
+        <a class="side-link active" data-tab-link="ranked" href="#">Ranked <span class="side-count" id="count-ranked">—</span></a>
+        <a class="side-link" data-tab-link="catalog" href="#">Catalog <span class="side-count" id="count-catalog">soon</span></a>
+      </nav>
+    </div>
 
-  <div class="quick" id="quick">
-    <button class="quickchip active" data-quick="all">All</button>
-    <button class="quickchip" data-quick="green">Pays reliably</button>
-    <button class="quickchip" data-quick="missed">Missed targets</button>
-    <button class="quickchip" data-quick="red">Risky</button>
-    <button class="quickchip" data-quick="lowcomp">Low crowding</button>
-    <button class="quickchip" data-quick="fresh">Fresh &lt; 12mo</button>
-    <button class="quickchip" data-quick="bigscope">Large scope</button>
-  </div>
+    <div class="side-block">
+      <div class="side-title">Data</div>
+      <nav class="side-nav">
+        <a class="side-link" href="#top10">Your top 10</a>
+        <a class="side-link" href="#all">All programs</a>
+        <a class="side-link" href="#method">Method</a>
+        <a class="side-link" href="data/programs.json" download>Download JSON</a>
+      </nav>
+    </div>
+  </aside>
 
-  <div id="list" class="list"></div>
+  <!-- ---------- main ---------- -->
+  <main class="doc">
 
-  <p class="foot" id="foot"></p>
-</main>
+    <div class="crumbs">
+      <a href="#top">honeybee</a>
+      <span class="sep">›</span>
+      <a href="#top10">Ranked</a>
+      <span class="sep">›</span>
+      <span class="crumb-current" id="crumb-current">Programs</span>
+      <span class="crumb-right" id="hero-count-wrap">Scored programs: <b id="hero-count">220</b></span>
+    </div>
 
-<!-- compare tray -->
+    <div class="h1-row">
+      <h1>Programs that actually pay</h1>
+      <div class="h1-actions">
+        <button class="icon-btn" id="copy-link" title="Copy a link to this view">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>
+        </button>
+        <a class="icon-btn" href="data/programs.json" download title="Download the dataset">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <details class="toc-box" open>
+      <summary>On this page</summary>
+      <ul>
+        <li><a href="#top10">Your top 10</a></li>
+        <li><a href="#all">All programs</a></li>
+        <li><a href="#method">Method and scoring</a></li>
+      </ul>
+    </details>
+
+    <details class="callout" open>
+      <summary>
+        <svg class="ic diamond" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12z"/></svg>
+        Page summary
+      </summary>
+      <div class="callout-body">
+        <p>
+          honeybee lists <b><span class="inline-count" id="hero-count-2">220</span> public, paid, open programs</b>
+          and ranks them on payout reliability, crowding, triage quality and scope — the things that decide
+          whether your report turns into money.
+        </p>
+        <p>
+          Every program is scored from free, unauthenticated HackerOne signals, refreshed every six hours.
+          Programs we cannot get enough signal for are shown as <em>unknown</em> instead of being given a
+          flattering score.
+        </p>
+      </div>
+    </details>
+
+    <h2 id="snapshot">Snapshot</h2>
+    <section class="stats" id="stats"></section>
+    <div class="tierbar" id="tierbar" title="Will They Pay distribution"></div>
+    <div class="tierlegend" id="tierlegend"></div>
+
+    <h2 id="top10">Your top 10</h2>
+    <p class="section-note" id="top10-note">population ranking · add a profile to personalise</p>
+    <section class="top10" id="top10-section">
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <h2 id="all">All programs</h2>
+    <div id="list" class="list"></div>
+
+    <h2 id="method">Method and scoring</h2>
+    <p class="foot" id="foot"></p>
+    <p class="method-links">
+      Full formula, weights, penalties and citations live in
+      <a href="https://github.com/" target="_blank" rel="noopener">docs/SCORING.md</a> in the repository.
+      Scope data comes from the community mirrors of HackerOne program listings.
+    </p>
+
+  </main>
+
+  <!-- ---------- right rail ---------- -->
+  <aside class="rail">
+    <div class="rail-block">
+      <h3>On this page</h3>
+      <ul class="rail-toc">
+        <li><a href="#snapshot">Snapshot</a></li>
+        <li><a href="#top10">Your top 10</a></li>
+        <li><a href="#all">All programs</a></li>
+        <li><a href="#method">Method and scoring</a></li>
+      </ul>
+    </div>
+
+    <div class="rail-block">
+      <h3>At a glance</h3>
+      <div class="rail-stats" id="rail-stats"></div>
+    </div>
+
+    <div class="rail-block">
+      <h3>Compare</h3>
+      <div id="rail-compare"></div>
+    </div>
+
+    <button class="btn primary full js-tune">Tune for me</button>
+  </aside>
+</div>
+
+<!-- ===================== COMPARE TRAY (narrow screens) ===================== -->
 <div class="tray" id="tray">
   <div class="tray-inner">
     <span class="tray-label">Compare</span>
     <div class="tray-items" id="tray-items"></div>
     <div class="spacer"></div>
     <button class="btn ghost sm" id="clear-compare">Clear</button>
-    <button class="btn primary" id="open-compare">Compare <span id="compare-count">2</span></button>
+    <button class="btn primary sm" id="open-compare">Compare <span id="compare-count">2</span></button>
   </div>
 </div>
 
-<!-- compare modal -->
+<!-- ===================== COMPARE DIALOG ===================== -->
 <div class="modal" id="compare-modal">
   <div class="modal-bg" id="compare-bg"></div>
   <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="compare-title">
-    <div class="compare-head">
+    <div class="modal-head">
       <h2 id="compare-title">Side by side</h2>
       <div class="spacer"></div>
       <button class="btn sm" id="export-csv">Export CSV</button>
@@ -126,14 +230,17 @@
   </div>
 </div>
 
-<!-- profile modal -->
+<!-- ===================== PROFILE DIALOG ===================== -->
 <div class="modal" id="modal">
   <div class="modal-bg" data-close></div>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <h2 id="modal-title">Tune honeybee to you</h2>
+    <div class="modal-head">
+      <h2 id="modal-title">Tune honeybee to you</h2>
+      <button class="btn ghost sm" data-close>Close</button>
+    </div>
     <p class="lede">
-      Everything here stays in your browser. With a profile the ranking shifts toward
-      programmes whose surface you can actually test.
+      Everything here stays in your browser. With a profile the ranking shifts toward programs whose
+      surface you can actually test.
     </p>
 
     <div class="fieldset">

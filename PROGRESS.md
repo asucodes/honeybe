@@ -136,6 +136,22 @@ Known source defects (handled, not hidden):
 - Will-They-Pay distribution bar + legend under the stats.
 - Keyboard: `/` focuses search, `Esc` closes modals.
 
+### 2026-10-20 - UI v3: Google Developers docs layout
+- Replaced the scriptmyads skin with a Google Developers docs layout: sticky white
+  app bar (logo, section tabs, search, "Tune for me"), full-width blue value-prop
+  banner, then a three-column shell - left nav (sort, quick filters with counts,
+  views, data links), main doc column, right rail (on-page TOC, at-a-glance stats,
+  compare panel).
+- Search moved into the app bar with a `/` shortcut hint. Typing while on Catalog
+  switches back to Ranked automatically.
+- Top 10 and the program list restyled as Material: 1px #dadce0 borders, 8px radius,
+  Roboto, blue accents, status chips (green/amber/red tinted), tabular numbers.
+- Compare now lives in the right rail on wide screens; the bottom tray only appears
+  below 1240px where the rail is hidden. Both drive the same selection state.
+- Added a real Method section (anchor + nav target) and a Download JSON action.
+- Verified: no console errors, no horizontal overflow at 985px, all 9 row cells fit
+  at every breakpoint, compare/tabs/profile dialog working.
+
 ---
 
 ## Next
