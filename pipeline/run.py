@@ -55,12 +55,27 @@ def main() -> int:
         programs,
         {
             "name": "honeybee",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "cadence_hours": CADENCE_HOURS,
             "scoring": "population v1 (HackerOne signals)",
             "slop_experimental": True,
         },
     )
+
+    print("  -> catalog merge")
+    try:
+        from .sources import catalog as catalog_source
+
+        scored_ids = {p["id"] for p in programs}
+        cat = catalog_source.build_catalog(scored_ids)
+        cat["generated_at"] = now.isoformat()
+        emit.write_catalog(cat)
+        print(
+            f"    {cat['counts']['total']} catalog programs "
+            f"({', '.join(f'{k} {v}' for k, v in sorted(cat['counts']['by_platform'].items()))})"
+        )
+    except Exception as exc:  # a catalog failure must never break the ranking
+        print(f"    catalog skipped: {exc}")
 
     elapsed = time.time() - started
     print(f"  ✓ wrote {len(programs)} programs in {elapsed:.1f}s")

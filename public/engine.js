@@ -5,14 +5,14 @@
  *
  * Design rules, in order of importance:
  *  1. Honest. Missing data never becomes a good score. A weak or
- *     partial profile weakens the personalization instead of guessing.
+ *  partial profile weakens the personalization instead of guessing.
  *  2. Bounded. Personalization can move a program by at most
- *     MAX_DELTA points in either direction. It reorders opinions,
- *     it cannot fabricate a winner.
+ *  MAX_DELTA points in either direction. It reorders opinions,
+ *  it cannot fabricate a winner.
  *  3. Explainable. Every personal component can be broken down into
- *     per-surface shares and proficiency, in plain numbers.
+ *  per-surface shares and proficiency, in plain numbers.
  *  4. Monotonic. Raising your proficiency in a program's dominant
- *     surface never lowers that program's score.
+ *  surface never lowers that program's score.
  *
  * The published JSON is user-agnostic. Everything personal happens here,
  * in the browser. No accounts, no server, no data leaves the machine.
@@ -42,8 +42,16 @@
   };
 
   var SURFACES = [
-    "web", "api", "mobile", "cloud", "network",
-    "source", "hardware", "smart_contract", "ai", "other",
+    "web",
+    "api",
+    "mobile",
+    "cloud",
+    "network",
+    "source",
+    "hardware",
+    "smart_contract",
+    "ai",
+    "other",
   ];
 
   var LEVEL_LABELS = { 1: "Beginner", 2: "Intermediate", 3: "Advanced" };
@@ -69,7 +77,7 @@
 
   var SCHEMA_VERSION = 2;
   var STACK_WEIGHT = 0.15; // maximum share handed to personal fit
-  var MAX_DELTA = 12;     // hard bound on personalization influence, points
+  var MAX_DELTA = 12; // hard bound on personalization influence, points
 
   function clamp(v, lo, hi) {
     if (typeof v !== "number" || isNaN(v)) return lo;
@@ -82,7 +90,9 @@
     var lvl = clamp(Number(level) || 2, 1, 3);
     var surfaces = {};
     var defaults = { web: lvl === 1 ? 2 : lvl === 2 ? 3 : 4 };
-    SURFACES.forEach(function (s) { surfaces[s] = defaults[s] || 0; });
+    SURFACES.forEach(function (s) {
+      surfaces[s] = defaults[s] || 0;
+    });
     return {
       version: SCHEMA_VERSION,
       capability: {
@@ -94,7 +104,12 @@
       constraints: {
         hours_per_week: lvl === 1 ? 5 : lvl === 2 ? 10 : 15,
         session_hours: lvl === 1 ? 2 : 3,
-        tools: { burp_pro: false, collaborator: false, mobile_proxy: false, vps: false },
+        tools: {
+          burp_pro: false,
+          collaborator: false,
+          mobile_proxy: false,
+          vps: false,
+        },
       },
       preferences: {
         goal: "first_bounty",
@@ -114,7 +129,11 @@
     p.capability.level = clamp(Number(p.capability.level) || 2, 1, 3);
     p.capability.surfaces = p.capability.surfaces || {};
     SURFACES.forEach(function (s) {
-      p.capability.surfaces[s] = clamp(Math.round(Number(p.capability.surfaces[s]) || 0), 0, 5);
+      p.capability.surfaces[s] = clamp(
+        Math.round(Number(p.capability.surfaces[s]) || 0),
+        0,
+        5,
+      );
     });
 
     p.constraints = p.constraints || {};
@@ -128,11 +147,17 @@
     });
 
     p.preferences = p.preferences || {};
-    if (["first_bounty", "income", "learning"].indexOf(p.preferences.goal) === -1) {
+    if (
+      ["first_bounty", "income", "learning"].indexOf(p.preferences.goal) === -1
+    ) {
       p.preferences.goal = "first_bounty";
     }
     p.preferences.variance_tolerance = clamp(
-      Number(p.preferences.variance_tolerance) == null ? 0.3 : Number(p.preferences.variance_tolerance), 0, 1
+      Number(p.preferences.variance_tolerance) == null
+        ? 0.3
+        : Number(p.preferences.variance_tolerance),
+      0,
+      1,
     );
 
     p.outcomes = Array.isArray(p.outcomes) ? p.outcomes : [];
@@ -145,20 +170,35 @@
   function completeness(profile) {
     if (!profile || !profile.capability) return 0;
     var s = profile.capability.surfaces || {};
-    var hasSurface = SURFACES.some(function (k) { return (s[k] || 0) > 0; }) ? 1 : 0;
+    var hasSurface = SURFACES.some(function (k) {
+      return (s[k] || 0) > 0;
+    })
+      ? 1
+      : 0;
     var hasGoal = profile.preferences && profile.preferences.goal ? 1 : 0;
-    var hasTime = profile.constraints &&
+    var hasTime =
+      profile.constraints &&
       Number(profile.constraints.hours_per_week) > 0 &&
-      Number(profile.constraints.session_hours) > 0 ? 1 : 0;
-    var hasTools = profile.constraints && profile.constraints.tools &&
-      Object.keys(profile.constraints.tools).some(function (k) { return profile.constraints.tools[k]; }) ? 1 : 0;
+      Number(profile.constraints.session_hours) > 0
+        ? 1
+        : 0;
+    var hasTools =
+      profile.constraints &&
+      profile.constraints.tools &&
+      Object.keys(profile.constraints.tools).some(function (k) {
+        return profile.constraints.tools[k];
+      })
+        ? 1
+        : 0;
     return 0.3 * hasSurface + 0.25 * hasGoal + 0.25 * hasTime + 0.2 * hasTools;
   }
 
   function hasProfile(profile) {
     if (!profile || !profile.capability) return false;
     var s = profile.capability.surfaces || {};
-    return SURFACES.some(function (k) { return (s[k] || 0) > 0; });
+    return SURFACES.some(function (k) {
+      return (s[k] || 0) > 0;
+    });
   }
 
   /* ---------- effective skill ---------- */
@@ -170,10 +210,15 @@
    */
   function effectiveSurfaces(profile) {
     var out = {};
-    var base = profile && profile.capability ? profile.capability.surfaces || {} : {};
-    var lvl = profile && profile.capability ? clamp(Number(profile.capability.level) || 2, 1, 3) : 2;
+    var base =
+      profile && profile.capability ? profile.capability.surfaces || {} : {};
+    var lvl =
+      profile && profile.capability
+        ? clamp(Number(profile.capability.level) || 2, 1, 3)
+        : 2;
     var factor = LEVEL_FACTORS[lvl];
-    var tools = profile && profile.constraints ? profile.constraints.tools || {} : {};
+    var tools =
+      profile && profile.constraints ? profile.constraints.tools || {} : {};
 
     SURFACES.forEach(function (s) {
       var b = clamp(Math.round(Number(base[s]) || 0), 0, 5);
@@ -199,9 +244,13 @@
 
   function dominantSurface(program) {
     var counts = surfaceCounts(program.scope);
-    var best = null, bestN = -1;
+    var best = null,
+      bestN = -1;
     Object.keys(counts).forEach(function (k) {
-      if (counts[k] > bestN) { best = k; bestN = counts[k]; }
+      if (counts[k] > bestN) {
+        best = k;
+        bestN = counts[k];
+      }
     });
     return best;
   }
@@ -215,7 +264,7 @@
   function timeGateFactor(profile, program) {
     if (!profile || !profile.constraints) return 1;
     var session = Number(profile.constraints.session_hours) || 3;
-    var assets = program.signals && program.signals.scope_count || 0;
+    var assets = (program.signals && program.signals.scope_count) || 0;
     if (session <= 2 && assets >= 200) return 0.75;
     if (session <= 3 && assets >= 400) return 0.85;
     return 1;
@@ -223,12 +272,13 @@
 
   /* ---------- match ---------- */
 
-  /** 0..1 — share-weighted effective proficiency across the program's scope. */
+  /** 0..1 - share-weighted effective proficiency across the program's scope. */
   function stackMatch(program, profile) {
     if (!hasProfile(profile)) return 0.5;
     var eff = effectiveSurfaces(profile);
     var counts = surfaceCounts(program.scope);
-    var total = 0, weighted = 0;
+    var total = 0,
+      weighted = 0;
     Object.keys(counts).forEach(function (surface) {
       var share = counts[surface];
       total += share;
@@ -245,19 +295,27 @@
   function matchBreakdown(program, profile) {
     var counts = surfaceCounts(program.scope);
     var eff = effectiveSurfaces(profile);
-    var base = profile && profile.capability ? profile.capability.surfaces || {} : {};
+    var base =
+      profile && profile.capability ? profile.capability.surfaces || {} : {};
     var total = 0;
-    Object.keys(counts).forEach(function (s) { total += counts[s]; });
-    if (total === 0) return { matched: 0, partial: 0, unmatched: 0, surfaces: [], total: 0 };
+    Object.keys(counts).forEach(function (s) {
+      total += counts[s];
+    });
+    if (total === 0)
+      return { matched: 0, partial: 0, unmatched: 0, surfaces: [], total: 0 };
 
-    var surfaces = Object.keys(counts).map(function (s) {
-      return {
-        surface: s,
-        share: counts[s] / total,
-        base: clamp(Math.round(Number(base[s]) || 0), 0, 5),
-        eff: eff[s],
-      };
-    }).sort(function (a, b) { return b.share - a.share; });
+    var surfaces = Object.keys(counts)
+      .map(function (s) {
+        return {
+          surface: s,
+          share: counts[s] / total,
+          base: clamp(Math.round(Number(base[s]) || 0), 0, 5),
+          eff: eff[s],
+        };
+      })
+      .sort(function (a, b) {
+        return b.share - a.share;
+      });
 
     var sum = { matched: 0, partial: 0, unmatched: 0 };
     surfaces.forEach(function (s) {
@@ -280,10 +338,19 @@
     if (!hasProfile(profile)) return 0;
     var eff = effectiveSurfaces(profile);
     var counts = surfaceCounts(program.scope);
-    var keys = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
+    var keys = Object.keys(counts).sort(function (a, b) {
+      return counts[b] - counts[a];
+    });
     var penalty = 0;
     keys.slice(0, 2).forEach(function (s, i) {
-      var share = counts[s] / Math.max(1, Object.keys(counts).reduce(function (n, k) { return n + counts[k]; }, 0));
+      var share =
+        counts[s] /
+        Math.max(
+          1,
+          Object.keys(counts).reduce(function (n, k) {
+            return n + counts[k];
+          }, 0),
+        );
       var weight = i === 0 ? 1 : 0.5; // dominant surface matters most
       if (eff[s] <= 1) penalty -= 18 * share * weight;
       else if (eff[s] === 2) penalty -= 8 * share * weight;
@@ -295,7 +362,9 @@
 
   function weightsFor(profile, personalWeight) {
     var weights = {};
-    Object.keys(BASE_WEIGHTS).forEach(function (k) { weights[k] = BASE_WEIGHTS[k]; });
+    Object.keys(BASE_WEIGHTS).forEach(function (k) {
+      weights[k] = BASE_WEIGHTS[k];
+    });
 
     if (!hasProfile(profile)) {
       weights.stack_match = 0;
@@ -307,22 +376,27 @@
 
     if (goal === "income") {
       weights.payout_reliability *= 1.45;
-      weights.inverse_crowd *= 1.10;
+      weights.inverse_crowd *= 1.1;
     } else if (goal === "first_bounty") {
       weights.inverse_crowd *= 1.35;
       weights.scope_breadth *= 0.65;
       weights.value_per_competition *= 0.85;
     } else if (goal === "learning") {
-      weights.value_per_competition *= 0.80;
-      weights.triage_quality *= 1.10;
+      weights.value_per_competition *= 0.8;
+      weights.triage_quality *= 1.1;
     }
 
-    var variance = typeof prefs.variance_tolerance === "number" ? clamp(prefs.variance_tolerance, 0, 1) : 0.3;
-    weights.value_per_competition *= 0.80 + variance * 0.60;
+    var variance =
+      typeof prefs.variance_tolerance === "number"
+        ? clamp(prefs.variance_tolerance, 0, 1)
+        : 0.3;
+    weights.value_per_competition *= 0.8 + variance * 0.6;
 
     var pw = clamp(Number(personalWeight) || STACK_WEIGHT, 0, STACK_WEIGHT);
     var sum = 0;
-    Object.keys(weights).forEach(function (k) { sum += weights[k]; });
+    Object.keys(weights).forEach(function (k) {
+      sum += weights[k];
+    });
     Object.keys(weights).forEach(function (k) {
       weights[k] = (weights[k] / sum) * (1 - pw);
     });
@@ -333,7 +407,9 @@
   /* ---------- scoring ---------- */
 
   function populationScore(program) {
-    return program.score && typeof program.score.total === "number" ? program.score.total : 0;
+    return program.score && typeof program.score.total === "number"
+      ? program.score.total
+      : 0;
   }
 
   function curatedScore(program, profile) {
@@ -343,11 +419,15 @@
     var c = completeness(profile);
     var weights = weightsFor(profile, STACK_WEIGHT * c);
     var parts = {};
-    var source = program.score && program.score.parts ? program.score.parts : {};
-    Object.keys(source).forEach(function (k) { parts[k] = source[k]; });
+    var source =
+      program.score && program.score.parts ? program.score.parts : {};
+    Object.keys(source).forEach(function (k) {
+      parts[k] = source[k];
+    });
 
     parts.stack_match = stackMatch(program, profile);
-    parts.scope_breadth = (parts.scope_breadth || 0) * timeGateFactor(profile, program);
+    parts.scope_breadth =
+      (parts.scope_breadth || 0) * timeGateFactor(profile, program);
 
     var total = 0;
     Object.keys(weights).forEach(function (k) {
@@ -355,7 +435,10 @@
     });
     total *= 100;
 
-    (program.score && program.score.penalties ? program.score.penalties : []).forEach(function (p) {
+    (program.score && program.score.penalties
+      ? program.score.penalties
+      : []
+    ).forEach(function (p) {
       total += p.points;
     });
     total += mismatchPenalty(program, profile);
@@ -369,7 +452,9 @@
   function rescore(programs, profile) {
     var personalised = hasProfile(profile);
     var out = programs.map(function (program, index) {
-      var score = personalised ? curatedScore(program, profile) : populationScore(program);
+      var score = personalised
+        ? curatedScore(program, profile)
+        : populationScore(program);
       return { program: program, score: score, index: index };
     });
 
@@ -381,7 +466,9 @@
     var total = out.length;
     return out.map(function (row, position) {
       row.rank = position + 1;
-      row.percentile = total ? Math.round((1 - position / total) * 1000) / 10 : 0;
+      row.percentile = total
+        ? Math.round((1 - position / total) * 1000) / 10
+        : 0;
       row.personalised = personalised;
       return row;
     });
@@ -396,7 +483,8 @@
 
     Object.keys(weights).forEach(function (key) {
       if (!weights[key]) return;
-      var value = key === "stack_match" ? stackMatch(program, profile) : (parts[key] || 0);
+      var value =
+        key === "stack_match" ? stackMatch(program, profile) : parts[key] || 0;
       rows.push({
         key: key,
         label: key.replace(/_/g, " "),
@@ -406,7 +494,9 @@
       });
     });
 
-    rows.sort(function (a, b) { return b.contribution - a.contribution; });
+    rows.sort(function (a, b) {
+      return b.contribution - a.contribution;
+    });
     return rows;
   }
 
@@ -419,10 +509,15 @@
    * which is where the elite-report programs like Stripe and GitHub sit.
    */
   function crowdedForBeginner(program, profile) {
-    if (!profile || !profile.capability || Number(profile.capability.level) !== 1) return false;
+    if (
+      !profile ||
+      !profile.capability ||
+      Number(profile.capability.level) !== 1
+    )
+      return false;
     var s = program.signals || {};
     var d = program.derived || {};
-    return (d.crowding_per_asset_month >= 5) || (s.reports_90d >= 900);
+    return d.crowding_per_asset_month >= 5 || s.reports_90d >= 900;
   }
 
   /* ---------- skill gap analysis ---------- */
@@ -435,9 +530,11 @@
   function skillGap(programs, profile) {
     if (!hasProfile(profile)) return [];
     var baseline = {};
-    rescore(programs, profile).slice(0, 50).forEach(function (r) {
-      baseline[r.program.id] = true;
-    });
+    rescore(programs, profile)
+      .slice(0, 50)
+      .forEach(function (r) {
+        baseline[r.program.id] = true;
+      });
 
     var weak = SURFACES.filter(function (s) {
       return (profile.capability.surfaces[s] || 0) <= 1;
@@ -451,14 +548,31 @@
       });
       var median = 0;
       if (gained.length) {
-        var scores = gained.map(function (r) { return r.score; }).sort(function (a, b) { return a - b; });
+        var scores = gained
+          .map(function (r) {
+            return r.score;
+          })
+          .sort(function (a, b) {
+            return a - b;
+          });
         median = scores[Math.floor(scores.length / 2)];
       }
-      return { surface: surface, count: gained.length, median: median, example: gained.length ? gained[0].program : null };
+      return {
+        surface: surface,
+        count: gained.length,
+        median: median,
+        example: gained.length ? gained[0].program : null,
+      };
     });
 
-    gaps.sort(function (a, b) { return b.count - a.count; });
-    return gaps.filter(function (g) { return g.count > 0; }).slice(0, 3);
+    gaps.sort(function (a, b) {
+      return b.count - a.count;
+    });
+    return gaps
+      .filter(function (g) {
+        return g.count > 0;
+      })
+      .slice(0, 3);
   }
 
   global.HBE = {

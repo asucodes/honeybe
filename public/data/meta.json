@@ -1,26 +1,27 @@
 {
   "name": "honeybee",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "cadence_hours": 6,
   "scoring": "population v1 (HackerOne signals)",
   "slop_experimental": true,
-  "generated_at": "2026-10-20T09:06:31.130741+00:00",
+  "generated_at": "2026-10-20T13:59:00.649251+00:00",
   "stats": {
-    "count": 220,
+    "count": 221,
     "score": {
       "min": 0.0,
-      "median": 40.9,
-      "max": 68.7
+      "median": 41.0,
+      "max": 68.6
     },
     "will_pay": {
       "green": 100,
-      "yellow": 100,
+      "yellow": 101,
       "red": 20,
       "unknown": 0
     },
-    "high_confidence": 216
+    "high_confidence": 217
   },
   "files": {
-    "programs": "data/programs.json"
+    "programs": "data/programs.json",
+    "catalog": "data/catalog.json"
   }
 }

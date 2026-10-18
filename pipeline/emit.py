@@ -135,8 +135,16 @@ def write_outputs(programs: list[dict[str, Any]], meta: dict[str, Any]) -> None:
         **meta,
         "generated_at": now.isoformat(),
         "stats": payload["stats"],
-        "files": {"programs": "data/programs.json"},
+        "files": {"programs": "data/programs.json", "catalog": "data/catalog.json"},
     }
     (DATA_DIR / "meta.json").write_text(
         json.dumps(meta_out, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def write_catalog(catalog: dict[str, Any]) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / "catalog.json").write_text(
+        json.dumps(catalog, ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
     )

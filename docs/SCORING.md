@@ -25,21 +25,21 @@ Only HackerOne exposes these for free, unauthenticated. Verified 2026-10-20.
 
 These look promising and are traps:
 
-- `bounty_competitiveness_percentile` — requires a `BountyCompetitivenessPercentileInput`
+- `bounty_competitiveness_percentile` - requires a `BountyCompetitivenessPercentileInput`
   object with four bounty amounts. It is a **calculator**, not a stored value.
-- `first_response_time`, `resolution_time`, `bounty_time`, `triage_time` — all `null`.
-- `bounties_total` — returns the string `"0"`.
+- `first_response_time`, `resolution_time`, `bounty_time`, `triage_time` - all `null`.
+- `bounties_total` - returns the string `"0"`.
 
 ## Sub-scores (each 0..1)
 
 ```
-novelty            = (age_months + 1) ^ -0.40
-crowding           = (reports_90d / 3) / max(scope_count, 1)
-inverse_crowd      = 1 / (1 + (crowding / 1.0) ^ 1.2)
+novelty  = (age_months + 1) ^ -0.40
+crowding  = (reports_90d / 3) / max(scope_count, 1)
+inverse_crowd  = 1 / (1 + (crowding / 1.0) ^ 1.2)
 payout_reliability = 0.5·(efficiency/100) + 0.3·(paid_90d > 0) + 0.2·exp(−days_since_resolved/90)
-value_per_comp     = min(1, log1p(avg_bounty_high) / log1p(20000)) / (1 + crowding)
-triage_quality     = (efficiency/100) × {1.0 ok, 0.75 missed, 0.5 failed}
-scope_breadth      = min(1, log1p(scope_count) / log1p(500))
+value_per_comp  = min(1, log1p(avg_bounty_high) / log1p(20000)) / (1 + crowding)
+triage_quality  = (efficiency/100) × {1.0 ok, 0.75 missed, 0.5 failed}
+scope_breadth  = min(1, log1p(scope_count) / log1p(500))
 ```
 
 The `-0.40` exponent is not invented. Maillart et al. measured bug-discovery
@@ -50,7 +50,7 @@ HackerOne programs (arXiv:1608.03445, R² = 0.79).
 
 ```
 base = 100 × (
-    0.22 · novelty
+  0.22 · novelty
   + 0.22 · inverse_crowd
   + 0.22 · payout_reliability
   + 0.16 · value_per_competition
@@ -79,7 +79,7 @@ score = clamp(base + penalties, 0, 100)
 | Tier | Condition |
 |---|---|
 | 🔴 Risky | `failed`, or efficiency < 50, or dormant > 180d |
-| 🟡 Missed targets | indicator `missed` — blowing its own stated SLAs |
+| 🟡 Missed targets | indicator `missed` - blowing its own stated SLAs |
 | 🟢 Pays reliably | `ok` + efficiency ≥ 80 + paid in 90d + resolved ≤ 30d |
 | 🟡 Pays slowly | everything else with sufficient signals |
 | ⚪ Unknown | no efficiency and no payout data |
@@ -91,11 +91,11 @@ Population 2026-10-20: 100 green · 100 yellow · 20 red.
 ```
 density  = reports_90d / max(scope_count, 1)
 pressure = reports_90d / max(resolved_total, 1)
-slop     = 0.6·min(1, density/50) + 0.4·min(1, pressure/10)
+slop  = 0.6·min(1, density/50) + 0.4·min(1, pressure/10)
 ```
 
-This is a **single-snapshot proxy**. The real signal is the derivative — a
-volume spike against a program's own baseline — which needs 2–4 weeks of
+This is a **single-snapshot proxy**. The real signal is the derivative - a
+volume spike against a program's own baseline - which needs 2-4 weeks of
 snapshots. The UI labels it experimental and it carries only a −10 penalty.
 
 ## Personalisation (engine v2)
@@ -122,14 +122,14 @@ score:
 
 ```
 personal_total = weighted parts + population penalties + surface penalties
-score          = clamp(population + clamp(personal_total − population, −12, +12), 0, 100)
+score  = clamp(population + clamp(personal_total − population, −12, +12), 0, 100)
 ```
 
 Opinions can reorder; they cannot fabricate a 90.
 
 ### Strength ramp
 
-The personal share of the weights is not fixed at 15% — it scales with profile
+The personal share of the weights is not fixed at 15% - it scales with profile
 completeness (surfaces 0.3, goal 0.25, time 0.25, tools 0.2):
 
 ```
@@ -183,19 +183,19 @@ The exact shift is shown in the profile dialog next to the goal chips.
 For each surface rated ≤ 1: simulate the user learning it to 3/5, re-rank, and
 count how many new programs enter their top 50 (with median score). The top 3
 opportunities appear in the right rail. This is a recommendation to *learn*,
-not to hunt — the ranking still only rewards what you can already test.
+not to hunt - the ranking still only rewards what you can already test.
 
 ### Beginner guard (UI only, no score change)
 
 Level 1 users see a "very crowded" marker on programs with crowding/asset/
-month ≥ 5 or ≥ 900 reports in 90 days — the top third of competition, where
+month ≥ 5 or ≥ 900 reports in 90 days - the top third of competition, where
 Stripe, GitHub and Shopify sit. It is a warning, not a filter: hiding programs
 would violate principle 1.
 
 ### Cold start
 
 With no profile, `stack_match = 0`, weights sum to 1, and the personal score
-equals the population score exactly — verified by test.
+equals the population score exactly - verified by test.
 
 ### Profile schema
 
@@ -209,12 +209,46 @@ Stored in `localStorage` only. `migrateProfile()` clamps every field and
 upgrades v1 profiles; corrupt input degrades to no profile. The engine is
 dependency-free and reusable (Weven).
 
+## Catalog ordering (not scoring)
+
+The Catalog holds every program we can find beyond the scored HackerOne set:
+HackerOne VDPs and unpaid programs plus Bugcrowd, Intigriti, YesWeHack and
+direct or platform-listed programs. Catalog rows are ordered, never scored.
+
+```
+points  = 45 · bounty_known
+        + 30 · min(1, log1p(scope_count) / log1p(400))
+        + 15 · min(1, scope_types / 6)
+        + 10 · safe_harbor            (full = 1.0, partial = 0.5)
+        + 10 · min(1, log1p(max_payout) / log1p(1_000_000))
+
+weights = sum of the weights above whose field is known
+order   = 100 · points / weights
+```
+
+Bounty known means the source states it: `True` scores 45, `False` (a VDP)
+scores 15. Points are normalised over known fields, so a missing payout figure
+neither helps nor hurts. Every row carries `coverage_pct` over four checks
+(bounty, payout, scope, disclosure terms) and the UI prints it.
+
+This ordering is a reading aid for an incomplete dataset. It is not evidence
+that a program pays, and it never feeds the population score.
+
+### Latest additions
+
+None of the catalog sources publish a launch date, so "latest" cannot mean
+"newest program". Instead the pipeline stores the first crawl that saw each
+`platform:slug` in `data/cache/catalog_seen.json` and writes `first_seen` and
+`new` onto every row. The Catalog exposes a "Latest additions" ordering on that
+date. It means first seen by honeybee, the UI says so, and the first crawl is a
+baseline where every row shares one date.
+
 ## Design principles
 
 1. **Missing data is never a good score.** Every program reports
-   `quality.signals_present` and a confidence tier. Catalog-only rows are shown
-   but never ranked.
+  `quality.signals_present` and a confidence tier. Catalog-only rows are shown
+  but never ranked.
 2. **Percentile next to the absolute score.** The population is not normalised
-   to 100, so `68.7` needs `top 6%` to mean anything.
+  to 100, so `68.7` needs `top 6%` to mean anything.
 3. **Every row explains itself.** Reasons and per-component contributions are
-   in the payload, not computed in a hidden service.
+  in the payload, not computed in a hidden service.

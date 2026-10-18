@@ -1,342 +1,1349 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>honeybee — programs that actually pay</title>
-<meta name="description" content="Bug bounty opportunity intelligence for mid-level hunters. Ranked on payout reliability, crowding and your own stack.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 28,10 28,22 16,29 4,22 4,10' fill='none' stroke='%231a73e8' stroke-width='3'/%3E%3C/svg%3E">
-</head>
-<body id="top">
-
-<!-- ===================== APP BAR ===================== -->
-<header class="appbar">
-  <div class="appbar-inner">
-    <a class="brand" href="#top">
-      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-        <polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#1a73e8" stroke-width="2.6"/>
-        <circle cx="16" cy="16" r="3.4" fill="#1a73e8"/>
-      </svg>
-      <span class="brand-text">
-        <span class="brand-name">honeybee</span>
-        <span class="brand-sub">bug bounty intelligence</span>
-      </span>
-    </a>
-
-    <nav class="appnav" aria-label="Sections">
-      <button class="appnav-link active" data-tab-link="ranked">Ranked</button>
-      <button class="appnav-link" data-tab-link="catalog">Catalog</button>
-      <button class="appnav-link" data-tab-link="method">Method</button>
-    </nav>
-
-    <div class="appbar-search">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-      <input id="search" type="search" placeholder="Search programs" autocomplete="off" aria-label="Search programs">
-      <kbd>/</kbd>
-    </div>
-
-    <span class="appbar-meta" id="meta">loading…</span>
-    <span id="profile-pill"></span>
-    <button class="btn-text js-tune" id="tune-btn">
-      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-      Tune for me
-    </button>
-    <span class="avatar" aria-hidden="true">🐝</span>
-  </div>
-</header>
-
-<div class="shell">
-
-  <!-- ---------- left nav ---------- -->
-  <aside class="sidenav">
-    <div class="side-block">
-      <div class="side-title">Sort by</div>
-      <div class="controls" id="controls">
-        <select id="sort" aria-label="Sort programs">
-          <option value="fit">Best fit</option>
-          <option value="lowcomp">Lowest competition</option>
-          <option value="newest">Newest</option>
-          <option value="payout">Highest paid (90d)</option>
-          <option value="scope">Largest scope</option>
-        </select>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>honeybee - programs that actually pay</title>
+    <meta
+      name="description"
+      content="Bug bounty opportunity intelligence for mid-level hunters. Ranked on payout reliability, crowding and your own stack."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  </head>
+  <body id="top">
+    <!-- ===================== SPLASH ===================== -->
+    <div class="splash" id="splash" aria-hidden="true">
+      <div class="splash-inner">
+        <svg class="splash-logo" viewBox="0 0 64 64" aria-hidden="true">
+          <g
+            class="hive"
+            stroke="#ffffff"
+            stroke-width="2"
+            stroke-linejoin="round"
+          >
+            <polygon
+              class="hx"
+              style="--i: 0"
+              points="32,6 54,19 54,45 32,58 10,45 10,19"
+              fill="#cfe6ff"
+            />
+            <polygon
+              class="hx"
+              style="--i: 1"
+              points="32,-18 46,-10 46,6 32,14 18,6 18,-10"
+              fill="#2f7fd4"
+            />
+            <polygon
+              class="hx"
+              style="--i: 2"
+              points="54,8 68,16 68,32 54,40 40,32 40,16"
+              fill="#9cc8f5"
+            />
+            <polygon
+              class="hx"
+              style="--i: 3"
+              points="54,40 68,48 68,64 54,72 40,64 40,48"
+              fill="#2f7fd4"
+            />
+            <polygon
+              class="hx"
+              style="--i: 4"
+              points="32,50 46,58 46,74 32,82 18,74 18,58"
+              fill="#0b3d91"
+            />
+            <polygon
+              class="hx"
+              style="--i: 5"
+              points="10,40 24,48 24,64 10,72 -4,64 -4,48"
+              fill="#9cc8f5"
+            />
+            <polygon
+              class="hx"
+              style="--i: 6"
+              points="10,8 24,16 24,32 10,40 -4,32 -4,16"
+              fill="#2f7fd4"
+            />
+          </g>
+          <g class="bee">
+            <ellipse
+              cx="32"
+              cy="36"
+              rx="10"
+              ry="13"
+              fill="#0b3d91"
+              transform="rotate(-12 32 36)"
+            />
+            <path
+              d="M23 32h18M22 37h19M24 42h16"
+              stroke="#ffffff"
+              stroke-width="2.6"
+              stroke-linecap="round"
+            />
+            <ellipse
+              cx="24"
+              cy="25"
+              rx="7"
+              ry="4.4"
+              fill="#ffffff"
+              opacity=".92"
+              transform="rotate(-28 24 25)"
+            />
+            <ellipse
+              cx="41"
+              cy="25"
+              rx="7"
+              ry="4.4"
+              fill="#ffffff"
+              opacity=".92"
+              transform="rotate(28 41 25)"
+            />
+            <circle cx="32" cy="21" r="4.6" fill="#0b3d91" />
+            <circle cx="30.4" cy="20" r="1.1" fill="#ffffff" />
+            <path
+              d="M27 16l-2-4M37 16l2-4"
+              stroke="#0b3d91"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </g>
+        </svg>
+        <div class="splash-name">honeybee</div>
+        <div class="splash-sub">bug bounty intelligence</div>
       </div>
+      <div class="splash-skip">click anywhere to skip</div>
     </div>
 
-    <div class="side-block">
-      <div class="side-title">Quick filters</div>
-      <div class="quick" id="quick">
-        <button class="quickchip active" data-quick="all">All programs <span class="chip-cnt" data-cnt="all"></span></button>
-        <button class="quickchip" data-quick="green">Pays reliably <span class="chip-cnt" data-cnt="green"></span></button>
-        <button class="quickchip" data-quick="missed">Missed targets <span class="chip-cnt" data-cnt="missed"></span></button>
-        <button class="quickchip" data-quick="red">Risky <span class="chip-cnt" data-cnt="red"></span></button>
-        <button class="quickchip" data-quick="lowcomp">Low crowding <span class="chip-cnt" data-cnt="lowcomp"></span></button>
-        <button class="quickchip" data-quick="fresh">Fresh &lt; 12mo <span class="chip-cnt" data-cnt="fresh"></span></button>
-        <button class="quickchip" data-quick="bigscope">Large scope <span class="chip-cnt" data-cnt="bigscope"></span></button>
-      </div>
-    </div>
-
-    <div class="side-block">
-      <div class="side-title">Views</div>
-      <nav class="side-nav">
-        <a class="side-link active" data-tab-link="ranked" href="#">Ranked <span class="side-count" id="count-ranked">—</span></a>
-        <a class="side-link" data-tab-link="catalog" href="#">Catalog <span class="side-count" id="count-catalog">soon</span></a>
-      </nav>
-    </div>
-
-    <div class="side-block">
-      <div class="side-title">Data</div>
-      <nav class="side-nav">
-        <a class="side-link" href="#top10">Your top 10</a>
-        <a class="side-link" href="#all">All programs</a>
-        <a class="side-link" href="#method">Method</a>
-        <a class="side-link" href="data/programs.json" download>Download JSON</a>
-      </nav>
-    </div>
-  </aside>
-
-  <!-- ---------- main ---------- -->
-  <main class="doc">
-
-    <div class="crumbs">
-      <a href="#top">honeybee</a>
-      <span class="sep">›</span>
-      <a href="#top10">Ranked</a>
-      <span class="sep">›</span>
-      <span class="crumb-current" id="crumb-current">Programs</span>
-      <span class="crumb-right" id="hero-count-wrap">Scored programs: <b id="hero-count">220</b></span>
-    </div>
-
-    <div class="h1-row">
-      <h1>Programs that actually pay</h1>
-      <div class="h1-actions">
-        <button class="icon-btn" id="copy-link" title="Copy a link to this view">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>
-        </button>
-        <a class="icon-btn" href="data/programs.json" download title="Download the dataset">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    <!-- ===================== APP BAR ===================== -->
+    <header class="appbar">
+      <div class="appbar-inner">
+        <a class="brand" href="#top">
+          <img class="brand-mark" src="logo.svg" alt="honeybee" />
+          <span class="brand-text">
+            <span class="brand-name">honeybee</span>
+            <span class="brand-sub">bug bounty intelligence</span>
+          </span>
         </a>
-      </div>
-    </div>
 
-    <details class="toc-box" open>
-      <summary>On this page</summary>
-      <ul>
-        <li><a href="#top10">Your top 10</a></li>
-        <li><a href="#all">All programs</a></li>
-        <li><a href="#method">Method and scoring</a></li>
-      </ul>
-    </details>
+        <nav class="appnav" aria-label="Sections">
+          <button class="appnav-link active" data-tab-link="ranked">
+            Ranked
+          </button>
+          <button class="appnav-link" data-tab-link="catalog">Catalog</button>
+          <button class="appnav-link" data-tab-link="method">Method</button>
+        </nav>
 
-    <details class="callout" open>
-      <summary>
-        <svg class="ic diamond" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12z"/></svg>
-        Page summary
-      </summary>
-      <div class="callout-body">
-        <p>
-          honeybee ranks <b><span class="inline-count" id="hero-count-2">220</span> public, paid, open HackerOne programs</b>
-          by payout reliability, crowding, triage quality and scope breadth. Data comes from free,
-          unauthenticated sources and refreshes every six hours.
-        </p>
-        <p>
-          Programs with insufficient signal are marked unknown instead of scored favorably.
-          Missing data never becomes a good score.
-        </p>
-      </div>
-    </details>
-
-    <h2 id="snapshot">Snapshot</h2>
-    <section class="stats" id="stats"></section>
-    <div class="tierbar" id="tierbar" title="Will They Pay distribution"></div>
-    <div class="tierlegend" id="tierlegend"></div>
-
-    <h2 id="top10">Your top 10</h2>
-    <p class="section-note" id="top10-note">population ranking · add a profile to personalise</p>
-    <section class="top10" id="top10-section">
-      <div class="cards" id="cards"></div>
-    </section>
-
-    <h2 id="all">All programs</h2>
-    <div id="list" class="list"></div>
-
-    <h2 id="method">Method and scoring</h2>
-    <p class="foot" id="foot"></p>
-    <p class="method-links">
-      Full formula, weights, penalties and citations live in
-      <a href="https://github.com/" target="_blank" rel="noopener">docs/SCORING.md</a> in the repository.
-      Scope data comes from the community mirrors of HackerOne program listings.
-    </p>
-
-  </main>
-
-  <!-- ---------- right rail ---------- -->
-  <aside class="rail">
-    <div class="rail-block">
-      <h3>On this page</h3>
-      <ul class="rail-toc">
-        <li><a href="#snapshot">Snapshot</a></li>
-        <li><a href="#top10">Your top 10</a></li>
-        <li><a href="#all">All programs</a></li>
-        <li><a href="#method">Method and scoring</a></li>
-      </ul>
-    </div>
-
-    <div class="rail-block">
-      <h3>At a glance</h3>
-      <div class="rail-stats" id="rail-stats"></div>
-    </div>
-
-    <div class="rail-block">
-      <h3>Compare</h3>
-      <div id="rail-compare"></div>
-    </div>
-
-    <div class="rail-block" id="rail-gap-block" style="display:none">
-      <h3>Skill gaps</h3>
-      <p class="rail-empty" id="rail-gap-note">If you practiced one more surface, these programs would enter your top 50.</p>
-      <div id="rail-gaps"></div>
-    </div>
-
-    <button class="btn primary full js-tune">Tune for me</button>
-  </aside>
-</div>
-
-<!-- ===================== COMPARE TRAY (narrow screens) ===================== -->
-<div class="tray" id="tray">
-  <div class="tray-inner">
-    <span class="tray-label">Compare</span>
-    <div class="tray-items" id="tray-items"></div>
-    <div class="spacer"></div>
-    <button class="btn ghost sm" id="clear-compare">Clear</button>
-    <button class="btn primary sm" id="open-compare">Compare <span id="compare-count">2</span></button>
-  </div>
-</div>
-
-<!-- ===================== COMPARE DIALOG ===================== -->
-<div class="modal" id="compare-modal">
-  <div class="modal-bg" id="compare-bg"></div>
-  <div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="compare-title">
-    <div class="modal-head">
-      <h2 id="compare-title">Side by side</h2>
-      <div class="spacer"></div>
-      <button class="btn sm" id="export-csv">Export CSV</button>
-      <button class="btn ghost sm" id="close-compare">Close</button>
-    </div>
-    <div id="compare-body"></div>
-  </div>
-</div>
-
-<!-- ===================== PROFILE DIALOG ===================== -->
-<div class="modal" id="modal">
-  <div class="modal-bg" data-close></div>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-head">
-      <h2 id="modal-title">Tune honeybee to you</h2>
-      <button class="btn ghost sm" data-close>Close</button>
-    </div>
-    <p class="lede">
-      Everything here stays in your browser. With a profile the ranking shifts toward programs whose
-      surface you can actually test.
-    </p>
-
-    <div class="fieldset">
-      <h3>Experience level</h3>
-      <div class="chips" id="level-chips">
-        <span class="chip" data-level="1">Beginner</span>
-        <span class="chip on" data-level="2">Intermediate</span>
-        <span class="chip" data-level="3">Advanced</span>
-      </div>
-      <p class="hint" id="level-hint">Your level scales every self-assessed skill. A beginner rating of 5 counts as 2.5 in the engine. Be honest — the ranking only helps if it is.</p>
-    </div>
-
-    <div class="fieldset">
-      <h3>What can you test?</h3>
-      <div class="sliders" id="surface-sliders"></div>
-    </div>
-
-    <div class="fieldset">
-      <h3>How much time do you have?</h3>
-      <div class="sliders">
-        <div class="slider">
-          <span>Hours / week</span>
-          <input type="range" id="hours" min="2" max="40" step="2" value="10">
-          <span class="sv" id="hours-v">10</span>
+        <div class="appbar-search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search programs"
+            autocomplete="off"
+            aria-label="Search programs"
+          />
+          <kbd>/</kbd>
         </div>
-        <div class="slider">
-          <span>Session length</span>
-          <input type="range" id="session" min="1" max="8" step="1" value="3">
-          <span class="sv" id="session-v">3h</span>
+
+        <span class="appbar-meta" id="meta">loading…</span>
+        <span id="profile-pill"></span>
+        <button class="btn-text js-tune" id="tune-btn">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"
+            />
+          </svg>
+          Tune for me
+        </button>
+        <span class="avatar" aria-hidden="true">🐝</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <!-- ---------- left nav ---------- -->
+      <aside class="sidenav">
+        <details class="side-block" id="sort-block" open>
+          <summary class="side-title">Sort by</summary>
+          <div class="controls" id="controls">
+            <select id="sort" aria-label="Sort programs">
+              <option value="fit">Best fit</option>
+              <option value="lowcomp">Lowest competition</option>
+              <option value="newest">Newest</option>
+              <option value="payout">Highest paid (90d)</option>
+              <option value="scope">Largest scope</option>
+            </select>
+          </div>
+        </details>
+
+        <details class="side-block">
+          <summary class="side-title">Quick filters</summary>
+          <div class="quick" id="quick">
+            <button class="quickchip active" data-quick="all">
+              All programs <span class="chip-cnt" data-cnt="all"></span>
+            </button>
+            <button class="quickchip" data-quick="green">
+              Pays reliably <span class="chip-cnt" data-cnt="green"></span>
+            </button>
+            <button class="quickchip" data-quick="missed">
+              Missed targets <span class="chip-cnt" data-cnt="missed"></span>
+            </button>
+            <button class="quickchip" data-quick="red">
+              Risky <span class="chip-cnt" data-cnt="red"></span>
+            </button>
+            <button class="quickchip" data-quick="lowcomp">
+              Low crowding <span class="chip-cnt" data-cnt="lowcomp"></span>
+            </button>
+            <button class="quickchip" data-quick="fresh">
+              Fresh &lt; 12mo <span class="chip-cnt" data-cnt="fresh"></span>
+            </button>
+            <button class="quickchip" data-quick="bigscope">
+              Large scope <span class="chip-cnt" data-cnt="bigscope"></span>
+            </button>
+          </div>
+        </details>
+
+        <details class="side-block" open>
+          <summary class="side-title">Views</summary>
+          <nav class="side-nav">
+            <a class="side-link active" data-tab-link="ranked" href="#"
+              >Ranked <span class="side-count" id="count-ranked">-</span></a
+            >
+            <a class="side-link" data-tab-link="catalog" href="#"
+              >Catalog
+              <span class="side-count" id="count-catalog">soon</span></a
+            >
+          </nav>
+        </details>
+
+        <details class="side-block">
+          <summary class="side-title">Data</summary>
+          <nav class="side-nav">
+            <a class="side-link" href="#top10">Your top 10</a>
+            <a class="side-link" href="#all">All programs</a>
+            <a class="side-link" href="#method">Method</a>
+            <a class="side-link" href="data/programs.json" download
+              >Download JSON</a
+            >
+            <a class="side-link" href="data/catalog.json" download
+              >Download catalog</a
+            >
+          </nav>
+        </details>
+      </aside>
+
+      <!-- ---------- main ---------- -->
+      <main class="doc">
+        <div class="crumbs">
+          <a href="#top">honeybee</a>
+          <span class="sep">›</span>
+          <a href="#top10" id="crumb-section">Ranked</a>
+          <span class="sep">›</span>
+          <span class="crumb-current" id="crumb-current">Programs</span>
+          <span class="crumb-right" id="hero-count-wrap"
+            >Scored programs: <b id="hero-count">220</b></span
+          >
+        </div>
+
+        <div class="h1-row">
+          <h1>Programs that actually pay</h1>
+          <div class="h1-actions">
+            <button
+              class="icon-btn"
+              id="copy-link"
+              title="Copy a link to this view"
+            >
+              <svg class="ic" viewBox="0 0 24 24">
+                <path
+                  d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"
+                />
+              </svg>
+            </button>
+            <a
+              class="icon-btn"
+              href="data/programs.json"
+              download
+              title="Download the dataset"
+            >
+              <svg class="ic" viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <details class="toc-box" open>
+          <summary>On this page</summary>
+          <ul id="toc-list">
+            <li><a href="#snapshot">Snapshot</a></li>
+            <li><a href="#top10">Your top 10</a></li>
+            <li><a href="#all">All programs</a></li>
+            <li><a href="#method">Method and research</a></li>
+          </ul>
+        </details>
+
+        <details class="callout">
+          <summary>
+            <svg class="ic diamond" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2 22 12 12 22 2 12z" />
+            </svg>
+            Page summary
+          </summary>
+          <div class="callout-body" id="page-summary-body">
+            <p>
+              honeybee ranks
+              <b
+                ><span class="inline-count" id="hero-count-2">220</span> public,
+                paid, open HackerOne programs</b
+              >
+              by payout reliability, crowding, triage quality and scope breadth.
+              Data comes from free, unauthenticated sources and refreshes every
+              six hours.
+            </p>
+            <p>
+              Programs with insufficient signal are marked unknown instead of
+              scored favorably. Missing data never becomes a good score.
+            </p>
+          </div>
+        </details>
+
+        <div id="ranked-view">
+          <h2 id="snapshot">Snapshot</h2>
+          <section class="stats" id="stats"></section>
+          <div
+            class="tierbar"
+            id="tierbar"
+            title="Will They Pay distribution"
+          ></div>
+          <div class="tierlegend" id="tierlegend"></div>
+
+          <h2 id="top10">Your top 10</h2>
+          <p class="section-note" id="top10-note">
+            population ranking · add a profile to personalise
+          </p>
+          <section class="top10" id="top10-section">
+            <div class="cards" id="cards"></div>
+          </section>
+
+          <h2 id="all">All programs</h2>
+          <div id="list" class="list"></div>
+        </div>
+        <!-- /ranked-view -->
+
+        <div id="catalog-view" style="display: none">
+          <h2 id="catalog">Catalog</h2>
+          <p class="lede">
+            Everything honeybee can find, across six sources, with the gaps left
+            visible. The Catalog is ordered, never scored: it exists to show you
+            what is out there when the ranked list is empty for your stack.
+          </p>
+          <p class="section-note" id="cat-intro"></p>
+
+          <div class="cat-toolbar">
+            <div class="cat-chips" id="cat-chips"></div>
+            <label class="cat-sort">
+              <span>Order</span>
+              <select id="cat-sort" aria-label="Order catalog programs">
+                <option value="best">Catalog order</option>
+                <option value="latest">Latest additions</option>
+                <option value="scope">Largest scope</option>
+                <option value="payout">Highest max payout</option>
+                <option value="name">Name A to Z</option>
+              </select>
+            </label>
+          </div>
+
+          <h3 class="subhead" id="cat-top">Catalog top 10</h3>
+          <p class="section-note" id="cat-top-note">
+            Ordered on scope size, stated bounties and disclosure terms, using
+            only the fields we have. This is an ordering, not a payout
+            prediction. Programs already scored in Ranked are excluded here.
+          </p>
+          <div class="cards" id="cat-cards"></div>
+
+          <h3 class="subhead" id="cat-latest">Latest additions</h3>
+          <p class="section-note" id="cat-latest-note"></p>
+          <div class="list cat-latest" id="cat-latest"></div>
+
+          <h3 class="subhead" id="cat-all">All catalog programs</h3>
+          <p class="section-note" id="cat-count"></p>
+          <div class="list" id="cat-list"></div>
+        </div>
+
+        <h2 id="method">Method and research</h2>
+        <p class="lede method-lede">
+          Most bug bounty lists rank by reward size and freshness. honeybee
+          ranks by whether a program actually pays, how crowded it is, and
+          whether its scope fits the skills you really have. Every step below is
+          arithmetic, published, and reproducible from the JSON this site
+          serves.
+        </p>
+
+        <div class="trustbar" aria-label="Trust and verification">
+          <span>Open source</span>
+          <span>No account</span>
+          <span>No tracking</span>
+          <span>No paid placement</span>
+          <span>Every input published</span>
+          <span>Rebuilt every 6 hours</span>
+          <span>27 engine tests</span>
+        </div>
+
+        <h3 class="subhead">How the data moves</h3>
+        <figure class="figure">
+          <svg
+            class="figure-svg"
+            viewBox="0 0 800 190"
+            role="img"
+            aria-label="Pipeline: HackerOne, arkadiyt and lissy93 feed a normaliser, then the scorer, then a static JSON file, then your browser."
+          >
+            <defs>
+              <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="9"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0 10 5 0 10z" fill="#9aa0a6" />
+              </marker>
+            </defs>
+
+            <rect
+              x="8"
+              y="16"
+              width="160"
+              height="38"
+              rx="8"
+              fill="#e8f0fe"
+              stroke="#1a73e8"
+            />
+            <text x="88" y="40" text-anchor="middle" class="fig-t">
+              HackerOne GraphQL
+            </text>
+            <text x="88" y="70" text-anchor="middle" class="fig-s">
+              10 scoring signals
+            </text>
+
+            <rect
+              x="8"
+              y="84"
+              width="160"
+              height="38"
+              rx="8"
+              fill="#e8f0fe"
+              stroke="#1a73e8"
+            />
+            <text x="88" y="108" text-anchor="middle" class="fig-t">
+              arkadiyt mirrors
+            </text>
+            <text x="88" y="138" text-anchor="middle" class="fig-s">
+              scope, Bugcrowd, Intigriti, YWH
+            </text>
+
+            <rect
+              x="8"
+              y="152"
+              width="160"
+              height="30"
+              rx="8"
+              fill="#e8f0fe"
+              stroke="#1a73e8"
+            />
+            <text x="88" y="172" text-anchor="middle" class="fig-t">
+              lissy93 lists
+            </text>
+
+            <line
+              x1="168"
+              y1="60"
+              x2="206"
+              y2="86"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+            <line
+              x1="168"
+              y1="103"
+              x2="206"
+              y2="103"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+            <line
+              x1="168"
+              y1="158"
+              x2="206"
+              y2="120"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+
+            <rect
+              x="212"
+              y="72"
+              width="150"
+              height="62"
+              rx="8"
+              fill="#ffffff"
+              stroke="#dadce0"
+            />
+            <text x="287" y="97" text-anchor="middle" class="fig-t">
+              normalise + dedupe
+            </text>
+            <text x="287" y="115" text-anchor="middle" class="fig-s">
+              one schema, one key
+            </text>
+
+            <line
+              x1="362"
+              y1="103"
+              x2="404"
+              y2="103"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+
+            <rect
+              x="410"
+              y="72"
+              width="120"
+              height="62"
+              rx="8"
+              fill="#ffffff"
+              stroke="#dadce0"
+            />
+            <text x="470" y="97" text-anchor="middle" class="fig-t">score</text>
+            <text x="470" y="115" text-anchor="middle" class="fig-s">
+              fixed weights
+            </text>
+
+            <line
+              x1="530"
+              y1="103"
+              x2="572"
+              y2="103"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+
+            <rect
+              x="578"
+              y="72"
+              width="100"
+              height="62"
+              rx="8"
+              fill="#ffffff"
+              stroke="#dadce0"
+            />
+            <text x="628" y="97" text-anchor="middle" class="fig-t">
+              static JSON
+            </text>
+            <text x="628" y="115" text-anchor="middle" class="fig-s">
+              GitHub Pages
+            </text>
+
+            <line
+              x1="678"
+              y1="103"
+              x2="712"
+              y2="103"
+              stroke="#9aa0a6"
+              stroke-width="1.6"
+              marker-end="url(#arrow)"
+            />
+
+            <rect
+              x="718"
+              y="72"
+              width="74"
+              height="62"
+              rx="8"
+              fill="#fef7e0"
+              stroke="#f0c36d"
+            />
+            <text x="755" y="97" text-anchor="middle" class="fig-t">you</text>
+            <text x="755" y="115" text-anchor="middle" class="fig-s">
+              in browser
+            </text>
+          </svg>
+          <figcaption>
+            Figure 1. Signals and scope are fetched by a scheduled job, scored
+            with fixed weights, written as static JSON, and personalised in your
+            browser. There is no server and no per-user computation cost.
+          </figcaption>
+        </figure>
+
+        <h3 class="subhead">Why payout reliability, not reward size</h3>
+        <p>
+          The largest prize on a page is not the prize most hunters can win. In
+          a survey of 159 bug bounty hunters, saturation ranked 10th and program
+          age 13th among the factors they actually weigh, while poor
+          responsiveness and payout disputes were the two biggest problems they
+          reported (Akgul et al., arXiv:2301.04781). So the score leads with
+          whether a program responds and pays, then how crowded it is, and only
+          then how large its rewards are.
+        </p>
+
+        <figure class="figure">
+          <svg
+            class="figure-svg"
+            viewBox="0 0 640 250"
+            role="img"
+            aria-label="Line chart of relative bug discovery probability against program age, decaying as t to the power minus 0.40."
+          >
+            <line
+              x1="56"
+              y1="196"
+              x2="616"
+              y2="196"
+              stroke="#dadce0"
+              stroke-width="1.4"
+            />
+            <line
+              x1="56"
+              y1="24"
+              x2="56"
+              y2="196"
+              stroke="#dadce0"
+              stroke-width="1.4"
+            />
+            <line
+              x1="56"
+              y1="24"
+              x2="616"
+              y2="24"
+              stroke="#e8eaed"
+              stroke-dasharray="4 4"
+            />
+            <line
+              x1="56"
+              y1="110"
+              x2="616"
+              y2="110"
+              stroke="#e8eaed"
+              stroke-dasharray="4 4"
+            />
+
+            <polyline
+              fill="none"
+              stroke="#1a73e8"
+              stroke-width="2.6"
+              stroke-linejoin="round"
+              points="56,24 65,66 75,85 84,97 94,106 103,112 113,117 122,121 132,125 141,128 151,130 160,132 170,134 179,136 189,138 198,139 208,141 217,142 227,143 236,144 246,145 255,146 265,147 274,148 284,149 293,149 303,150 312,151 322,151 331,152 341,152 350,153 360,154 369,154 379,155 388,155 398,155 407,156 417,156 426,157 436,157 445,157 455,158 464,158 474,158 483,159 493,159 502,159 512,160 521,160 531,160 540,161 550,161 559,161 569,161 578,162 588,162 597,162 607,162 616,163"
+            />
+
+            <text x="56" y="216" class="fig-s" text-anchor="start">
+              month 1
+            </text>
+            <text x="616" y="216" class="fig-s" text-anchor="end">
+              month 60
+            </text>
+            <text x="64" y="44" class="fig-t">
+              relative discovery probability
+            </text>
+            <text x="470" y="70" class="fig-t">t^-0.40</text>
+            <text x="66" y="88" class="fig-s">1.0</text>
+            <text x="66" y="106" class="fig-s">0.8</text>
+            <text x="66" y="176" class="fig-s">0.2</text>
+          </svg>
+          <figcaption>
+            Figure 2. Discovery probability decays as t^-0.40 over the life of a
+            program. Maillart et al. fitted this across 35 public HackerOne
+            programs (R² = 0.79, arXiv:1608.03445). honeybee uses the measured
+            exponent instead of an arbitrary freshness bonus.
+          </figcaption>
+        </figure>
+
+        <div class="research-grid">
+          <article class="research">
+            <div class="research-tag">Age</div>
+            <h4>Maillart et al.</h4>
+            <p>
+              Discovery probability falls as <code>t^-0.40</code> after launch,
+              so an old program is not automatically a bad one, but a new one
+              genuinely is easier to enter.
+            </p>
+            <a
+              href="https://arxiv.org/abs/1608.03445"
+              target="_blank"
+              rel="noopener"
+              >arXiv:1608.03445</a
+            >
+          </article>
+          <article class="research">
+            <div class="research-tag">Hunter priorities</div>
+            <h4>Akgul et al.</h4>
+            <p>
+              In a survey of 159 hunters, responsiveness and payout disputes
+              beat prize size as the reasons hunters leave a program.
+            </p>
+            <a
+              href="https://arxiv.org/abs/2301.04781"
+              target="_blank"
+              rel="noopener"
+              >arXiv:2301.04781</a
+            >
+          </article>
+          <article class="research">
+            <div class="research-tag">Fairness</div>
+            <h4>Zheng et al.</h4>
+            <p>
+              Across 9,942 HackerOne reports, higher reputation won the better
+              outcome in 59.85% of near-identical pairs. Reputation is a
+              tiebreaker we cannot see fairly, so honeybee does not model it at
+              all.
+            </p>
+            <a
+              href="https://arxiv.org/abs/2511.18608"
+              target="_blank"
+              rel="noopener"
+              >arXiv:2511.18608</a
+            >
+          </article>
+        </div>
+
+        <h3 class="subhead">1. What is scored</h3>
+        <p>
+          Only HackerOne programs that offer bounties and are open to
+          submissions. At the last crawl that is
+          <b id="method-count">221</b> programs. Every other program, including
+          unpaid HackerOne VDPs, Bugcrowd, Intigriti, YesWeHack and direct
+          programs, appears in the
+          <a href="#catalog" data-tab-link="catalog">Catalog</a> and is never
+          scored.
+        </p>
+
+        <h3 class="subhead">2. The ten signals</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Signal</th>
+              <th>HackerOne field</th>
+              <th>Used for</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Age</td>
+              <td>launched_at</td>
+              <td>novelty decay</td>
+            </tr>
+            <tr>
+              <td>Reports in 90 days</td>
+              <td>reports_received_last_90_days</td>
+              <td>crowding</td>
+            </tr>
+            <tr>
+              <td>Resolved total</td>
+              <td>resolved_report_count</td>
+              <td>slop pressure</td>
+            </tr>
+            <tr>
+              <td>Response efficiency</td>
+              <td>response_efficiency_percentage</td>
+              <td>payout reliability, triage</td>
+            </tr>
+            <tr>
+              <td>Response status</td>
+              <td>response_efficiency_indicator</td>
+              <td>triage, penalties</td>
+            </tr>
+            <tr>
+              <td>Lifetime paid</td>
+              <td>formatted_total_bounties_paid_amount</td>
+              <td>context</td>
+            </tr>
+            <tr>
+              <td>Paid in 90 days</td>
+              <td>formatted_bounties_paid_last_90_days</td>
+              <td>payout reliability</td>
+            </tr>
+            <tr>
+              <td>Last resolved</td>
+              <td>last_report_resolved_at</td>
+              <td>recency</td>
+            </tr>
+            <tr>
+              <td>Average bounty</td>
+              <td>average_bounty_lower/upper_amount</td>
+              <td>value per competition</td>
+            </tr>
+            <tr>
+              <td>Scope size</td>
+              <td>structured_scopes.total_count</td>
+              <td>crowding denominator, breadth</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">3. The formula</h3>
+        <pre class="formula">
+novelty  = (age_months + 1) ^ -0.40
+crowding  = (reports_90d / 3) / max(scope_count, 1)
+inverse_crowd  = 1 / (1 + crowding ^ 1.2)
+payout_reliability = 0.5 * (efficiency / 100)
+  + 0.3 * (paid_90d > 0)
+  + 0.2 * exp(-days_since_resolved / 90)
+value_per_comp  = min(1, log1p(avg_bounty) / log1p(20000)) / (1 + crowding)
+triage_quality  = (efficiency / 100) * {1.0 ok, 0.75 missed, 0.5 failed}
+scope_breadth  = min(1, log1p(scope_count) / log1p(500))
+
+base  = 100 * (0.22 novelty + 0.22 inverse_crowd + 0.22 payout_reliability
+  + 0.16 value_per_comp + 0.11 triage_quality + 0.07 scope_breadth)
+score = clamp(base + penalties, 0, 100)</pre
+        >
+
+        <figure class="figure">
+          <div
+            class="wchart"
+            role="img"
+            aria-label="Weight chart: novelty 22 percent, inverse crowding 22, payout reliability 22, value per competition 16, triage quality 11, scope breadth 7."
+          >
+            <div class="wrow">
+              <span>Novelty</span><i style="width: 100%"></i><b>22%</b>
+            </div>
+            <div class="wrow">
+              <span>Inverse crowding</span><i style="width: 100%"></i><b>22%</b>
+            </div>
+            <div class="wrow">
+              <span>Payout reliability</span><i style="width: 100%"></i
+              ><b>22%</b>
+            </div>
+            <div class="wrow">
+              <span>Value per competition</span><i style="width: 73%"></i
+              ><b>16%</b>
+            </div>
+            <div class="wrow">
+              <span>Triage quality</span><i style="width: 50%"></i><b>11%</b>
+            </div>
+            <div class="wrow">
+              <span>Scope breadth</span><i style="width: 32%"></i><b>7%</b>
+            </div>
+          </div>
+          <figcaption>
+            Figure 3. The six components sum to 100. Two thirds of the score is
+            payout behaviour and competition, not reward size.
+          </figcaption>
+        </figure>
+
+        <h3 class="subhead">4. Penalties</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Condition</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Response indicator failed</td>
+              <td>-25</td>
+            </tr>
+            <tr>
+              <td>Response indicator missed</td>
+              <td>-10</td>
+            </tr>
+            <tr>
+              <td>More than 1,000 reports in 90 days</td>
+              <td>-20</td>
+            </tr>
+            <tr>
+              <td>More than 3,000 reports in 90 days</td>
+              <td>-10</td>
+            </tr>
+            <tr>
+              <td>Nothing resolved in 180 days</td>
+              <td>-15</td>
+            </tr>
+            <tr>
+              <td>Slop risk at or above 0.6</td>
+              <td>-10</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">5. Badges</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Will they pay</th>
+              <th>Condition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pays reliably</td>
+              <td>
+                indicator ok, efficiency at or above 80, paid in 90 days,
+                resolved in 30 days
+              </td>
+            </tr>
+            <tr>
+              <td>Pays slowly</td>
+              <td>enough signal, but slower than the bar above</td>
+            </tr>
+            <tr>
+              <td>Missed targets</td>
+              <td>
+                indicator missed, so the program is blowing its own stated SLAs
+              </td>
+            </tr>
+            <tr>
+              <td>Risky</td>
+              <td>
+                indicator failed, efficiency below 50, or dormant more than 180
+                days
+              </td>
+            </tr>
+            <tr>
+              <td>Unknown</td>
+              <td>not enough signal. Shown honestly, not scored favorably</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">6. Personalisation, and why it cannot lie</h3>
+        <p>
+          Your profile changes the order, never the facts. Four rules keep it
+          honest, and <code>public/engine.test.js</code> asserts each one.
+        </p>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Rule</th>
+              <th>Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Experience level</td>
+              <td>
+                scales every self-rating: beginner x0.5, intermediate x0.85,
+                advanced x1.0
+              </td>
+            </tr>
+            <tr>
+              <td>Profile strength</td>
+              <td>
+                personal weight = 15% x completeness, so a half-filled profile
+                applies half-strength
+              </td>
+            </tr>
+            <tr>
+              <td>Bounded influence</td>
+              <td>
+                a personal score moves at most plus or minus 12 points from the
+                population score
+              </td>
+            </tr>
+            <tr>
+              <td>Skill gap</td>
+              <td>
+                simulates learning a weak surface to 3/5 and counts the programs
+                that would enter your top 50
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout-note">
+          <b>Worked example.</b> A program scores 68.6 for everyone. If your
+          profile is 80% complete and your effective stack matches, your
+          personal score can land anywhere between 56.6 and 80.6. The delta is
+          printed in every expanded card, together with the cap. A profile can
+          reorder the list; it cannot turn a 40 into a 90.
+        </div>
+        <p>
+          Surface mismatch is share-weighted over the two largest surfaces: an
+          effective rating at or below 1 costs 18 points times its share, a
+          rating of 2 costs 8. Tools amplify a surface you already practice and
+          can never create skill from zero. Short sessions discount very large
+          scopes.
+        </p>
+
+        <h3 id="catalog-method" class="subhead">
+          7. The Catalog: breadth with honest gaps
+        </h3>
+        <p>
+          The Catalog is the honest answer to a simple question: what else is
+          out there, and what do we actually know about it? It merges four open
+          sources: the arkadiyt mirrors for HackerOne, Bugcrowd, Intigriti and
+          YesWeHack, plus the lissy93 lists for platform and direct programs.
+          Rows are deduplicated on <code>platform:slug</code> and merged, so a
+          program listed twice keeps the better field from each source.
+        </p>
+        <div id="cat-coverage-figure" class="figure">
+          <div class="covbars" id="covbars">
+            <div class="covbar-empty">Loading catalog counts.</div>
+          </div>
+          <p class="figure-cap" id="cov-caption">
+            Figure 4. Catalog rows by source and the fields each row can prove.
+          </p>
+        </div>
+        <pre class="formula">
+points  = 45 * bounty_known
+        + 30 * min(1, log1p(scope_count) / log1p(400))
+        + 15 * min(1, scope_types / 6)
+        + 10 * disclosure_terms
+        + 10 * min(1, log1p(max_payout) / log1p(1000000))
+
+order   = 100 * points / sum(weights of known fields)</pre
+        >
+        <p>
+          Points are normalised over the fields that exist, so a missing payout
+          figure neither helps nor hurts. Every row prints a coverage percentage
+          over four checks: bounty status, payout, scope and disclosure terms.
+          The Catalog also tracks when honeybee first saw each program, which is
+          what powers the "Latest additions" ordering. That date means first
+          seen by us, not the program's launch date, and it is labelled that
+          way.
+        </p>
+        <div class="callout-note warn">
+          <b>What the Catalog is not.</b> It is not a payout prediction. Catalog
+          rows carry no report counts, no response efficiency and no payout
+          history, so a high catalog order is only a statement that the
+          published fields look broad and open. Missing data is printed as
+          missing, never as a good score.
+        </div>
+
+        <h3 class="subhead">8. How to verify us</h3>
+        <ol class="verify">
+          <li>
+            Download <a href="data/programs.json" download>programs.json</a>.
+            Every signal, weight, penalty and component contribution is in the
+            file.
+          </li>
+          <li>
+            Recompute any row by hand with the formula above. The components sum
+            to the score before penalties, and penalties are listed per row.
+          </li>
+          <li>
+            Run the personalisation tests:
+            <code>node public/engine.test.js</code>. They assert bounds,
+            monotonicity, cold start and the beginner guard.
+          </li>
+          <li>
+            Read the scoring code: <code>pipeline/score.py</code> and
+            <code>pipeline/badges.py</code>. There is no model, no ranking
+            service and no hidden tiebreaker.
+          </li>
+          <li>
+            Check the network panel. The page loads static files and makes no
+            calls with your profile. Personalisation runs locally and is stored
+            in <code>localStorage</code>.
+          </li>
+        </ol>
+
+        <h3 class="subhead">9. Research</h3>
+        <ol class="refs">
+          <li>
+            Maillart, Zhao, Grossklags, Chuang.
+            <i
+              >Given Enough Eyeballs, All Bugs Are Shallow? Revisiting Eric
+              Raymond with Bug Bounty Programs.</i
+            >
+            <a
+              href="https://arxiv.org/abs/1608.03445"
+              target="_blank"
+              rel="noopener"
+              >arXiv:1608.03445</a
+            >. Source of the t^-0.40 novelty exponent.
+          </li>
+          <li>
+            Akgul et al.
+            <i>Bug hunters' perspectives on bug bounty programs.</i>
+            <a
+              href="https://arxiv.org/abs/2301.04781"
+              target="_blank"
+              rel="noopener"
+              >arXiv:2301.04781</a
+            >. 159 hunters. Source of the payout reliability and crowding
+            priorities.
+          </li>
+          <li>
+            Zheng et al. <i>An analysis of 9,942 HackerOne reports.</i>
+            <a
+              href="https://arxiv.org/abs/2511.18608"
+              target="_blank"
+              rel="noopener"
+              >arXiv:2511.18608</a
+            >. Source of the decision not to model reporter reputation.
+          </li>
+        </ol>
+
+        <h3 class="subhead">10. Limits</h3>
+        <ul class="limits">
+          <li>
+            Signals come from unauthenticated HackerOne endpoints. Anything
+            behind a login is absent.
+          </li>
+          <li>
+            Catalog rows carry no report counts. That is why they are not
+            scored.
+          </li>
+          <li>
+            Slop risk is a single-snapshot proxy and is labeled experimental.
+          </li>
+          <li>
+            Scope data is refreshed from community mirrors every 30 minutes
+            upstream, and merged here every 6 hours.
+          </li>
+          <li>
+            First-seen dates start at the first crawl. Until two crawls exist,
+            "Latest additions" means "everything", and the UI says so.
+          </li>
+        </ul>
+      </main>
+
+      <!-- ---------- right rail ---------- -->
+      <aside class="rail">
+        <div class="rail-block">
+          <h3>On this page</h3>
+          <ul class="rail-toc">
+            <li><a href="#snapshot">Snapshot</a></li>
+            <li><a href="#top10">Your top 10</a></li>
+            <li><a href="#all">All programs</a></li>
+            <li><a href="#catalog" data-tab-link="catalog">Catalog</a></li>
+            <li><a href="#method">Method</a></li>
+          </ul>
+        </div>
+
+        <div class="rail-block">
+          <h3>At a glance</h3>
+          <div class="rail-stats" id="rail-stats"></div>
+        </div>
+
+        <div class="rail-block">
+          <h3>Compare</h3>
+          <div id="rail-compare"></div>
+        </div>
+
+        <div class="rail-block" id="rail-gap-block" style="display: none">
+          <h3>Skill gaps</h3>
+          <p class="rail-empty" id="rail-gap-note">
+            If you practiced one more surface, these programs would enter your
+            top 50.
+          </p>
+          <div id="rail-gaps"></div>
+        </div>
+
+        <button class="btn primary full js-tune">Tune for me</button>
+      </aside>
+    </div>
+
+    <!-- ===================== COMPARE TRAY (narrow screens) ===================== -->
+    <div class="tray" id="tray">
+      <div class="tray-inner">
+        <span class="tray-label">Compare</span>
+        <div class="tray-items" id="tray-items"></div>
+        <div class="spacer"></div>
+        <button class="btn ghost sm" id="clear-compare">Clear</button>
+        <button class="btn primary sm" id="open-compare">
+          Compare <span id="compare-count">2</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================== COMPARE DIALOG ===================== -->
+    <div class="modal" id="compare-modal">
+      <div class="modal-bg" id="compare-bg"></div>
+      <div
+        class="modal-card wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="compare-title"
+      >
+        <div class="modal-head">
+          <h2 id="compare-title">Side by side</h2>
+          <div class="spacer"></div>
+          <button class="btn sm" id="export-csv">Export CSV</button>
+          <button class="btn ghost sm" id="close-compare">Close</button>
+        </div>
+        <div id="compare-body"></div>
+      </div>
+    </div>
+
+    <!-- ===================== MATCH CARD ===================== -->
+    <div class="modal" id="match-modal">
+      <div class="modal-bg" data-close-match></div>
+      <div
+        class="modal-card match-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="match-title"
+      >
+        <div id="match-body"></div>
+      </div>
+    </div>
+
+    <!-- ===================== PROFILE DIALOG ===================== -->
+    <div class="modal" id="modal">
+      <div class="modal-bg" data-close></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div class="modal-head">
+          <h2 id="modal-title">Tune honeybee to you</h2>
+          <button class="btn ghost sm" data-close>Close</button>
+        </div>
+        <p class="lede">
+          Everything here stays in your browser. With a profile the ranking
+          shifts toward programs whose surface you can actually test.
+        </p>
+
+        <div class="fieldset">
+          <h3>Experience level</h3>
+          <div class="chips" id="level-chips">
+            <span class="chip" data-level="1">Beginner</span>
+            <span class="chip on" data-level="2">Intermediate</span>
+            <span class="chip" data-level="3">Advanced</span>
+          </div>
+          <p class="hint" id="level-hint">
+            Your level scales every self-assessed skill. A beginner rating of 5
+            counts as 2.5 in the engine. Be honest - the ranking only helps if
+            it is.
+          </p>
+        </div>
+
+        <div class="fieldset">
+          <h3>What can you test?</h3>
+          <div class="sliders" id="surface-sliders"></div>
+        </div>
+
+        <div class="fieldset">
+          <h3>How much time do you have?</h3>
+          <div class="sliders">
+            <div class="slider">
+              <span>Hours / week</span>
+              <input
+                type="range"
+                id="hours"
+                min="2"
+                max="40"
+                step="2"
+                value="10"
+              />
+              <span class="sv" id="hours-v">10</span>
+            </div>
+            <div class="slider">
+              <span>Session length</span>
+              <input
+                type="range"
+                id="session"
+                min="1"
+                max="8"
+                step="1"
+                value="3"
+              />
+              <span class="sv" id="session-v">3h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fieldset">
+          <h3>What are you optimising for?</h3>
+          <div class="chips" id="goal-chips">
+            <span class="chip on" data-goal="first_bounty">First bounty</span>
+            <span class="chip" data-goal="income">Steady income</span>
+            <span class="chip" data-goal="learning">Learning</span>
+          </div>
+          <p class="hint" id="goal-shift-note"></p>
+        </div>
+
+        <div class="fieldset">
+          <h3>What do you have?</h3>
+          <div class="chips" id="tool-chips">
+            <span class="chip" data-tool="burp_pro">Burp Pro</span>
+            <span class="chip" data-tool="collaborator"
+              >OOB / Collaborator</span
+            >
+            <span class="chip" data-tool="mobile_proxy"
+              >Mobile proxy setup</span
+            >
+            <span class="chip" data-tool="vps">VPS</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn ghost" id="reset-profile">Clear</button>
+          <button class="btn" data-close>Cancel</button>
+          <button class="btn primary" id="save-profile">Apply</button>
         </div>
       </div>
     </div>
 
-    <div class="fieldset">
-      <h3>What are you optimising for?</h3>
-      <div class="chips" id="goal-chips">
-        <span class="chip on" data-goal="first_bounty">First bounty</span>
-        <span class="chip" data-goal="income">Steady income</span>
-        <span class="chip" data-goal="learning">Learning</span>
+    <!-- ===================== ONBOARDING DIALOG ===================== -->
+    <div class="modal" id="onboard">
+      <div class="modal-bg" data-close-onboard></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="onboard-title"
+      >
+        <div class="onboard-bee" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <polygon
+              points="16,3 28,10 28,22 16,29 4,22 4,10"
+              fill="none"
+              stroke="#1a73e8"
+              stroke-width="2.6"
+            />
+            <circle cx="16" cy="16" r="3.4" fill="#1a73e8" />
+          </svg>
+        </div>
+        <h2 id="onboard-title">How experienced are you with bug bounties?</h2>
+        <p class="lede">
+          honeybee personalises the ranking to what you can actually test. Pick
+          the closest description - you can change everything later. This stays
+          in your browser.
+        </p>
+
+        <div class="onboard-options">
+          <button class="onboard-option" data-level="1">
+            <b>Beginner</b>
+            <span
+              >I haven't submitted a real bug report yet, or only a few.</span
+            >
+          </button>
+          <button class="onboard-option" data-level="2">
+            <b>Intermediate</b>
+            <span
+              >I've had reports accepted and know my way around a web app.</span
+            >
+          </button>
+          <button class="onboard-option" data-level="3">
+            <b>Advanced</b>
+            <span>I find bugs reliably and I know my strongest surfaces.</span>
+          </button>
+        </div>
+
+        <div class="onboard-actions">
+          <button class="btn ghost" data-close-onboard>Skip for now</button>
+        </div>
       </div>
-      <p class="hint" id="goal-shift-note"></p>
     </div>
 
-    <div class="fieldset">
-      <h3>What do you have?</h3>
-      <div class="chips" id="tool-chips">
-        <span class="chip" data-tool="burp_pro">Burp Pro</span>
-        <span class="chip" data-tool="collaborator">OOB / Collaborator</span>
-        <span class="chip" data-tool="mobile_proxy">Mobile proxy setup</span>
-        <span class="chip" data-tool="vps">VPS</span>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn ghost" id="reset-profile">Clear</button>
-      <button class="btn" data-close>Cancel</button>
-      <button class="btn primary" id="save-profile">Apply</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===================== ONBOARDING DIALOG ===================== -->
-<div class="modal" id="onboard">
-  <div class="modal-bg" data-close-onboard></div>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
-    <div class="onboard-bee" aria-hidden="true">
-      <svg viewBox="0 0 32 32"><polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="#1a73e8" stroke-width="2.6"/><circle cx="16" cy="16" r="3.4" fill="#1a73e8"/></svg>
-    </div>
-    <h2 id="onboard-title">How experienced are you with bug bounties?</h2>
-    <p class="lede">
-      honeybee personalises the ranking to what you can actually test. Pick the closest
-      description — you can change everything later. This stays in your browser.
-    </p>
-
-    <div class="onboard-options">
-      <button class="onboard-option" data-level="1">
-        <b>Beginner</b>
-        <span>I haven't submitted a real bug report yet, or only a few.</span>
-      </button>
-      <button class="onboard-option" data-level="2">
-        <b>Intermediate</b>
-        <span>I've had reports accepted and know my way around a web app.</span>
-      </button>
-      <button class="onboard-option" data-level="3">
-        <b>Advanced</b>
-        <span>I find bugs reliably and I know my strongest surfaces.</span>
-      </button>
-    </div>
-
-    <div class="onboard-actions">
-      <button class="btn ghost" data-close-onboard>Skip for now</button>
-    </div>
-  </div>
-</div>
-
-<script src="engine.js"></script>
-<script src="app.js"></script>
-</body>
+    <script src="engine.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
