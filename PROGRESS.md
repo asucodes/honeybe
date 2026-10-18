@@ -1,7 +1,8 @@
 # HONEYBEE - Build Progress
 
 > Bug bounty opportunity intelligence for mid-level hunters.
-> Two tabs: **Ranked** (scored programs) and **Catalog** (everything we can find, honest about gaps).
+> Three pages: **Home** (what it solves), **Ranked + Catalog** (the index) and **Method and research**.
+> Light and dark themes, no accounts, no tracking.
 
 **Name:** honeybee
 **Crawl cadence:** every 6 hours (`17 */6 * * *`)
@@ -234,6 +235,33 @@ Known source defects (handled, not hidden):
   `data/cache/catalog_seen.json`, so the first crawl is labelled a baseline and
   later crawls produce a real change feed.
 - Catalog intro now names its sources and the dedupe key.
+
+### 2026-10-20 - Split pages, home, dark mode
+- Split the single document into three pages:
+  - `index.html` is now a home page, not the docs shell.
+  - `app.html` is the index: Ranked and Catalog stay as two views of the same
+    tool, with search, filters, compare and match cards.
+  - `method.html` is the standalone Method and research document.
+  The app bar is shared across all three, and the Method link navigates instead
+  of scrolling.
+- Home page: dark blue honeycomb hero, a live stat strip, an example match card,
+  the six data sources with their real marks, a three-part "what we solve"
+  section with UI fragments (badges, crowding bars, skill rows), the research
+  cards, a live top five from `programs.json`, a closing CTA and a footer.
+  Counts and the top five are fetched from the published JSON at runtime.
+- Dark mode: full token override for every surface, status colour and figure.
+  The theme follows the OS, is toggled from the app bar, persists in
+  `localStorage` under `honeybee.theme`, and can be deep-linked with
+  `?theme=light` or `?theme=dark`. A tiny inline script applies it before paint
+  to avoid a flash.
+- Splash moved to the home page only and extracted into `splash.js`, so a JS
+  failure or reduced-motion setting can no longer leave the overlay stuck.
+- The method page keeps its figures, tables, research cards and verification
+  steps, and loads live counts plus the coverage figure from `page.js`.
+- Source logos are committed as PNGs in `public/logos/`, shown on light tiles so
+  dark marks remain visible in both themes.
+- Removed the Method entry from "On this page" lists, since it is now a
+  separate page. The rail block is labelled "Sections".
 
 ---
 

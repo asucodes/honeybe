@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ranked - honeybee</title>
+    <meta
+      name="description"
+      content="Ranked bug bounty programs, scored on payout reliability, crowding, triage quality and your own stack."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <script>
+      (function () {
+        try {
+          var q = new URLSearchParams(window.location.search).get("theme");
+          var t = q || localStorage.getItem("honeybee.theme");
+          if (!t)
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          if (t === "dark" || t === "light")
+            document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body id="top">
+    <!-- ===================== APP BAR ===================== -->
+    <header class="appbar">
+      <div class="appbar-inner">
+        <a class="brand" href="index.html">
+          <img class="brand-mark" src="logo.svg" alt="honeybee" />
+          <span class="brand-text">
+            <span class="brand-name">honeybee</span>
+            <span class="brand-sub">bug bounty intelligence</span>
+          </span>
+        </a>
+
+        <nav class="appnav" aria-label="Sections">
+          <button class="appnav-link active" data-tab-link="ranked">
+            Ranked
+          </button>
+          <button class="appnav-link" data-tab-link="catalog">Catalog</button>
+          <a class="appnav-link" href="method.html">Method</a>
+        </nav>
+
+        <div class="appbar-search">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            />
+          </svg>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search programs"
+            autocomplete="off"
+            aria-label="Search programs"
+          />
+          <kbd>/</kbd>
+        </div>
+
+        <span class="appbar-meta" id="meta">loading…</span>
+        <span id="profile-pill"></span>
+        <button class="btn-text js-tune" id="tune-btn">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"
+            />
+          </svg>
+          Tune for me
+        </button>
+        <button
+          class="icon-btn theme-toggle"
+          data-theme-toggle
+          aria-label="Switch colour theme"
+          title="Switch colour theme"
+        >
+          <svg class="ic icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36A7.5 7.5 0 0 1 12.36 3.1c-.12-.03-.24-.05-.36-.08z"
+            />
+          </svg>
+          <svg class="ic icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m10 10 2.1 2.1M4.9 19.1l2.1-2.1m10-10 2.1-2.1"
+              stroke="currentColor"
+              stroke-width="1.8"
+              fill="none"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <span class="avatar" aria-hidden="true">🐝</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <!-- ---------- left nav ---------- -->
+      <aside class="sidenav">
+        <details class="side-block" id="sort-block" open>
+          <summary class="side-title">Sort by</summary>
+          <div class="controls" id="controls">
+            <select id="sort" aria-label="Sort programs">
+              <option value="fit">Best fit</option>
+              <option value="lowcomp">Lowest competition</option>
+              <option value="newest">Newest</option>
+              <option value="payout">Highest paid (90d)</option>
+              <option value="scope">Largest scope</option>
+            </select>
+          </div>
+        </details>
+
+        <details class="side-block">
+          <summary class="side-title">Quick filters</summary>
+          <div class="quick" id="quick">
+            <button class="quickchip active" data-quick="all">
+              All programs <span class="chip-cnt" data-cnt="all"></span>
+            </button>
+            <button class="quickchip" data-quick="green">
+              Pays reliably <span class="chip-cnt" data-cnt="green"></span>
+            </button>
+            <button class="quickchip" data-quick="missed">
+              Missed targets <span class="chip-cnt" data-cnt="missed"></span>
+            </button>
+            <button class="quickchip" data-quick="red">
+              Risky <span class="chip-cnt" data-cnt="red"></span>
+            </button>
+            <button class="quickchip" data-quick="lowcomp">
+              Low crowding <span class="chip-cnt" data-cnt="lowcomp"></span>
+            </button>
+            <button class="quickchip" data-quick="fresh">
+              Fresh &lt; 12mo <span class="chip-cnt" data-cnt="fresh"></span>
+            </button>
+            <button class="quickchip" data-quick="bigscope">
+              Large scope <span class="chip-cnt" data-cnt="bigscope"></span>
+            </button>
+          </div>
+        </details>
+
+        <details class="side-block" open>
+          <summary class="side-title">Views</summary>
+          <nav class="side-nav">
+            <a class="side-link active" data-tab-link="ranked" href="#"
+              >Ranked <span class="side-count" id="count-ranked">-</span></a
+            >
+            <a class="side-link" data-tab-link="catalog" href="#"
+              >Catalog
+              <span class="side-count" id="count-catalog">soon</span></a
+            >
+          </nav>
+        </details>
+
+        <details class="side-block">
+          <summary class="side-title">Data</summary>
+          <nav class="side-nav">
+            <a class="side-link" href="#top10">Your top 10</a>
+            <a class="side-link" href="#all">All programs</a>
+            <a class="side-link" href="method.html">Method and research</a>
+            <a class="side-link" href="data/programs.json" download
+              >Download JSON</a
+            >
+            <a class="side-link" href="data/catalog.json" download
+              >Download catalog</a
+            >
+          </nav>
+        </details>
+      </aside>
+
+      <!-- ---------- main ---------- -->
+      <main class="doc">
+        <div class="crumbs">
+          <a href="#top">honeybee</a>
+          <span class="sep">›</span>
+          <a href="#top10" id="crumb-section">Ranked</a>
+          <span class="sep">›</span>
+          <span class="crumb-current" id="crumb-current">Programs</span>
+          <span class="crumb-right" id="hero-count-wrap"
+            >Scored programs: <b id="hero-count">220</b></span
+          >
+        </div>
+
+        <div class="h1-row">
+          <h1>Programs that actually pay</h1>
+          <div class="h1-actions">
+            <button
+              class="icon-btn"
+              id="copy-link"
+              title="Copy a link to this view"
+            >
+              <svg class="ic" viewBox="0 0 24 24">
+                <path
+                  d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"
+                />
+              </svg>
+            </button>
+            <a
+              class="icon-btn"
+              href="data/programs.json"
+              download
+              title="Download the dataset"
+            >
+              <svg class="ic" viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <details class="toc-box" open>
+          <summary>On this page</summary>
+          <ul id="toc-list">
+            <li><a href="#snapshot">Snapshot</a></li>
+            <li><a href="#top10">Your top 10</a></li>
+            <li><a href="#all">All programs</a></li>
+          </ul>
+        </details>
+
+        <details class="callout">
+          <summary>
+            <svg class="ic diamond" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2 22 12 12 22 2 12z" />
+            </svg>
+            Page summary
+          </summary>
+          <div class="callout-body" id="page-summary-body">
+            <p>
+              honeybee ranks
+              <b
+                ><span class="inline-count" id="hero-count-2">220</span> public,
+                paid, open HackerOne programs</b
+              >
+              by payout reliability, crowding, triage quality and scope breadth.
+              Data comes from free, unauthenticated sources and refreshes every
+              six hours.
+            </p>
+            <p>
+              Programs with insufficient signal are marked unknown instead of
+              scored favorably. Missing data never becomes a good score.
+            </p>
+          </div>
+        </details>
+
+        <div id="ranked-view">
+          <h2 id="snapshot">Snapshot</h2>
+          <section class="stats" id="stats"></section>
+          <div
+            class="tierbar"
+            id="tierbar"
+            title="Will They Pay distribution"
+          ></div>
+          <div class="tierlegend" id="tierlegend"></div>
+
+          <h2 id="top10">Your top 10</h2>
+          <p class="section-note" id="top10-note">
+            population ranking · add a profile to personalise
+          </p>
+          <section class="top10" id="top10-section">
+            <div class="cards" id="cards"></div>
+          </section>
+
+          <h2 id="all">All programs</h2>
+          <div id="list" class="list"></div>
+        </div>
+        <!-- /ranked-view -->
+
+        <div id="catalog-view" style="display: none">
+          <h2 id="catalog">Catalog</h2>
+          <p class="lede">
+            Everything honeybee can find, across six sources, with the gaps left
+            visible. The Catalog is ordered, never scored: it exists to show you
+            what is out there when the ranked list is empty for your stack.
+          </p>
+          <p class="section-note" id="cat-intro"></p>
+
+          <div class="cat-toolbar">
+            <div class="cat-chips" id="cat-chips"></div>
+            <label class="cat-sort">
+              <span>Order</span>
+              <select id="cat-sort" aria-label="Order catalog programs">
+                <option value="best">Catalog order</option>
+                <option value="latest">Latest additions</option>
+                <option value="scope">Largest scope</option>
+                <option value="payout">Highest max payout</option>
+                <option value="name">Name A to Z</option>
+              </select>
+            </label>
+          </div>
+
+          <h3 class="subhead" id="cat-top">Catalog top 10</h3>
+          <p class="section-note" id="cat-top-note">
+            Ordered on scope size, stated bounties and disclosure terms, using
+            only the fields we have. This is an ordering, not a payout
+            prediction. Programs already scored in Ranked are excluded here.
+          </p>
+          <div class="cards" id="cat-cards"></div>
+
+          <h3 class="subhead" id="cat-latest">Latest additions</h3>
+          <p class="section-note" id="cat-latest-note"></p>
+          <div class="list cat-latest" id="cat-latest"></div>
+
+          <h3 class="subhead" id="cat-all">All catalog programs</h3>
+          <p class="section-note" id="cat-count"></p>
+          <div class="list" id="cat-list"></div>
+        </div>
+      </main>
+
+      <!-- ---------- right rail ---------- -->
+      <aside class="rail">
+        <div class="rail-block">
+          <h3>Sections</h3>
+          <ul class="rail-toc">
+            <li><a href="#snapshot">Snapshot</a></li>
+            <li><a href="#top10">Your top 10</a></li>
+            <li><a href="#all">All programs</a></li>
+            <li><a href="#catalog" data-tab-link="catalog">Catalog</a></li>
+            <li><a href="method.html">Method and research</a></li>
+          </ul>
+        </div>
+
+        <div class="rail-block">
+          <h3>At a glance</h3>
+          <div class="rail-stats" id="rail-stats"></div>
+        </div>
+
+        <div class="rail-block">
+          <h3>Compare</h3>
+          <div id="rail-compare"></div>
+        </div>
+
+        <div class="rail-block" id="rail-gap-block" style="display: none">
+          <h3>Skill gaps</h3>
+          <p class="rail-empty" id="rail-gap-note">
+            If you practiced one more surface, these programs would enter your
+            top 50.
+          </p>
+          <div id="rail-gaps"></div>
+        </div>
+
+        <button class="btn primary full js-tune">Tune for me</button>
+      </aside>
+    </div>
+
+    <!-- ===================== COMPARE TRAY (narrow screens) ===================== -->
+    <div class="tray" id="tray">
+      <div class="tray-inner">
+        <span class="tray-label">Compare</span>
+        <div class="tray-items" id="tray-items"></div>
+        <div class="spacer"></div>
+        <button class="btn ghost sm" id="clear-compare">Clear</button>
+        <button class="btn primary sm" id="open-compare">
+          Compare <span id="compare-count">2</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================== COMPARE DIALOG ===================== -->
+    <div class="modal" id="compare-modal">
+      <div class="modal-bg" id="compare-bg"></div>
+      <div
+        class="modal-card wide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="compare-title"
+      >
+        <div class="modal-head">
+          <h2 id="compare-title">Side by side</h2>
+          <div class="spacer"></div>
+          <button class="btn sm" id="export-csv">Export CSV</button>
+          <button class="btn ghost sm" id="close-compare">Close</button>
+        </div>
+        <div id="compare-body"></div>
+      </div>
+    </div>
+
+    <!-- ===================== MATCH CARD ===================== -->
+    <div class="modal" id="match-modal">
+      <div class="modal-bg" data-close-match></div>
+      <div
+        class="modal-card match-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="match-title"
+      >
+        <div id="match-body"></div>
+      </div>
+    </div>
+
+    <!-- ===================== PROFILE DIALOG ===================== -->
+    <div class="modal" id="modal">
+      <div class="modal-bg" data-close></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <div class="modal-head">
+          <h2 id="modal-title">Tune honeybee to you</h2>
+          <button class="btn ghost sm" data-close>Close</button>
+        </div>
+        <p class="lede">
+          Everything here stays in your browser. With a profile the ranking
+          shifts toward programs whose surface you can actually test.
+        </p>
+
+        <div class="fieldset">
+          <h3>Experience level</h3>
+          <div class="chips" id="level-chips">
+            <span class="chip" data-level="1">Beginner</span>
+            <span class="chip on" data-level="2">Intermediate</span>
+            <span class="chip" data-level="3">Advanced</span>
+          </div>
+          <p class="hint" id="level-hint">
+            Your level scales every self-assessed skill. A beginner rating of 5
+            counts as 2.5 in the engine. Be honest - the ranking only helps if
+            it is.
+          </p>
+        </div>
+
+        <div class="fieldset">
+          <h3>What can you test?</h3>
+          <div class="sliders" id="surface-sliders"></div>
+        </div>
+
+        <div class="fieldset">
+          <h3>How much time do you have?</h3>
+          <div class="sliders">
+            <div class="slider">
+              <span>Hours / week</span>
+              <input
+                type="range"
+                id="hours"
+                min="2"
+                max="40"
+                step="2"
+                value="10"
+              />
+              <span class="sv" id="hours-v">10</span>
+            </div>
+            <div class="slider">
+              <span>Session length</span>
+              <input
+                type="range"
+                id="session"
+                min="1"
+                max="8"
+                step="1"
+                value="3"
+              />
+              <span class="sv" id="session-v">3h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fieldset">
+          <h3>What are you optimising for?</h3>
+          <div class="chips" id="goal-chips">
+            <span class="chip on" data-goal="first_bounty">First bounty</span>
+            <span class="chip" data-goal="income">Steady income</span>
+            <span class="chip" data-goal="learning">Learning</span>
+          </div>
+          <p class="hint" id="goal-shift-note"></p>
+        </div>
+
+        <div class="fieldset">
+          <h3>What do you have?</h3>
+          <div class="chips" id="tool-chips">
+            <span class="chip" data-tool="burp_pro">Burp Pro</span>
+            <span class="chip" data-tool="collaborator"
+              >OOB / Collaborator</span
+            >
+            <span class="chip" data-tool="mobile_proxy"
+              >Mobile proxy setup</span
+            >
+            <span class="chip" data-tool="vps">VPS</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn ghost" id="reset-profile">Clear</button>
+          <button class="btn" data-close>Cancel</button>
+          <button class="btn primary" id="save-profile">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ONBOARDING DIALOG ===================== -->
+    <div class="modal" id="onboard">
+      <div class="modal-bg" data-close-onboard></div>
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="onboard-title"
+      >
+        <div class="onboard-bee" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <polygon
+              points="16,3 28,10 28,22 16,29 4,22 4,10"
+              fill="none"
+              stroke="#1a73e8"
+              stroke-width="2.6"
+            />
+            <circle cx="16" cy="16" r="3.4" fill="#1a73e8" />
+          </svg>
+        </div>
+        <h2 id="onboard-title">How experienced are you with bug bounties?</h2>
+        <p class="lede">
+          honeybee personalises the ranking to what you can actually test. Pick
+          the closest description - you can change everything later. This stays
+          in your browser.
+        </p>
+
+        <div class="onboard-options">
+          <button class="onboard-option" data-level="1">
+            <b>Beginner</b>
+            <span
+              >I haven't submitted a real bug report yet, or only a few.</span
+            >
+          </button>
+          <button class="onboard-option" data-level="2">
+            <b>Intermediate</b>
+            <span
+              >I've had reports accepted and know my way around a web app.</span
+            >
+          </button>
+          <button class="onboard-option" data-level="3">
+            <b>Advanced</b>
+            <span>I find bugs reliably and I know my strongest surfaces.</span>
+          </button>
+        </div>
+
+        <div class="onboard-actions">
+          <button class="btn ghost" data-close-onboard>Skip for now</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="engine.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

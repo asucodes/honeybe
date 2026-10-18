@@ -9,11 +9,23 @@ challenges they report are **poor responsiveness** and **payout disputes**.
 honeybee ranks on **whether the program will actually pay you**, and personalises the
 ranking to the stack and constraints you actually have.
 
-## Two tabs
+## Pages
 
-| Tab | Promise | Data |
+| Page | What it is |
+|---|---|
+| `index.html` | Home. What honeybee solves, the live counts, the sources, the research basis and the live top five. |
+| `app.html` | The index. Ranked programs and the Catalog, with search, filters, comparison and match cards. |
+| `method.html` | Method and research. Every signal, formula, penalty, bound and citation, plus verification steps. |
+
+All three share the same app bar and a light or dark theme. The theme follows your
+OS by default, can be toggled from the app bar, and is stored in `localStorage`
+under `honeybee.theme`. A `?theme=light` or `?theme=dark` query also works.
+
+## Two views
+
+| View | Promise | Data |
 |---|---|---|
-| **Ranked** | Programs we can score, ranked for you, with reasons | HackerOne: 220 programs × 10 signals |
+| **Ranked** | Programs we can score, ranked for you, with reasons | HackerOne: 221 programs × 10 signals |
 | **Catalog** | Every program we can find, with everything known, and honest gaps | arkadiyt (HackerOne, Bugcrowd, Intigriti, YesWeHack) + lissy93 |
 
 Catalog rows are **never** scored. Missing data cannot become a good score.
@@ -51,8 +63,13 @@ pipeline/
   badges.py  # "Will They Pay?" + AI-slop proxy
   emit.py  # writes public/data/*.json
 public/
-  index.html
-  app.js  # tabs, filters, table
+  index.html  # home: what it solves, sources, research, live top 5
+  app.html  # the index: Ranked + Catalog
+  method.html  # method and research
+  app.js  # tabs, filters, table, match cards
+  home.js  # live counts and preview on the home page
+  page.js  # live counts and coverage figure on the method page
+  theme.js  # light/dark theme, stored in localStorage
   engine.js  # personalization module (framework-agnostic)
   logo.svg  # honeycomb mark
 docs/SCORING.md  # formulas + research citations

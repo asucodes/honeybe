@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Method and research - honeybee</title>
+    <meta
+      name="description"
+      content="How honeybee scores bug bounty programs: signals, formulas, penalties, personalisation bounds, catalog ordering, research citations and verification steps."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <script>
+      (function () {
+        try {
+          var q = new URLSearchParams(window.location.search).get("theme");
+          var t = q || localStorage.getItem("honeybee.theme");
+          if (!t)
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          if (t === "dark" || t === "light")
+            document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="page-method">
+    <header class="appbar">
+      <div class="appbar-inner">
+        <a class="brand" href="index.html">
+          <img class="brand-mark" src="logo.svg" alt="honeybee" />
+          <span class="brand-text">
+            <span class="brand-name">honeybee</span>
+            <span class="brand-sub">bug bounty intelligence</span>
+          </span>
+        </a>
+        <nav class="appnav" aria-label="Sections">
+          <a class="appnav-link" href="app.html">Ranked</a>
+          <a class="appnav-link" href="app.html#catalog">Catalog</a>
+          <a class="appnav-link active" href="method.html">Method</a>
+        </nav>
+        <div class="spacer"></div>
+        <button
+          class="icon-btn theme-toggle"
+          data-theme-toggle
+          aria-label="Switch colour theme"
+          title="Switch colour theme"
+        >
+          <svg class="ic icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36A7.5 7.5 0 0 1 12.36 3.1c-.12-.03-.24-.05-.36-.08z"
+            />
+          </svg>
+          <svg class="ic icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m10 10 2.1 2.1M4.9 19.1l2.1-2.1m10-10 2.1-2.1"
+              stroke="currentColor"
+              stroke-width="1.8"
+              fill="none"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <a class="btn primary sm top-explore" href="app.html"
+          >Explore programs</a
+        >
+      </div>
+    </header>
+
+    <main class="page-doc">
+      <div class="crumbs page-crumbs">
+        <a href="index.html">honeybee</a>
+        <span class="sep">›</span>
+        <span class="crumb-current">Method and research</span>
+      </div>
+      <h1>Method and research</h1>
+      <p class="lede method-lede">
+        Most bug bounty lists rank by reward size and freshness. honeybee ranks
+        by whether a program actually pays, how crowded it is, and whether its
+        scope fits the skills you really have. Every step below is arithmetic,
+        published, and reproducible from the JSON this site serves.
+      </p>
+
+      <div class="trustbar" aria-label="Trust and verification">
+        <span>Open source</span>
+        <span>No account</span>
+        <span>No tracking</span>
+        <span>No paid placement</span>
+        <span>Every input published</span>
+        <span>Rebuilt every 6 hours</span>
+        <span>27 engine tests</span>
+      </div>
+
+      <h3 class="subhead">How the data moves</h3>
+      <figure class="figure">
+        <svg
+          class="figure-svg"
+          viewBox="0 0 800 190"
+          role="img"
+          aria-label="Pipeline: HackerOne, arkadiyt and lissy93 feed a normaliser, then the scorer, then a static JSON file, then your browser."
+        >
+          <defs>
+            <marker
+              id="arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M0 0 10 5 0 10z" fill="#9aa0a6" />
+            </marker>
+          </defs>
+
+          <rect
+            x="8"
+            y="16"
+            width="160"
+            height="38"
+            rx="8"
+            fill="#e8f0fe"
+            stroke="#1a73e8"
+          />
+          <text x="88" y="40" text-anchor="middle" class="fig-t">
+            HackerOne GraphQL
+          </text>
+          <text x="88" y="70" text-anchor="middle" class="fig-s">
+            10 scoring signals
+          </text>
+
+          <rect
+            x="8"
+            y="84"
+            width="160"
+            height="38"
+            rx="8"
+            fill="#e8f0fe"
+            stroke="#1a73e8"
+          />
+          <text x="88" y="108" text-anchor="middle" class="fig-t">
+            arkadiyt mirrors
+          </text>
+          <text x="88" y="138" text-anchor="middle" class="fig-s">
+            scope, Bugcrowd, Intigriti, YWH
+          </text>
+
+          <rect
+            x="8"
+            y="152"
+            width="160"
+            height="30"
+            rx="8"
+            fill="#e8f0fe"
+            stroke="#1a73e8"
+          />
+          <text x="88" y="172" text-anchor="middle" class="fig-t">
+            lissy93 lists
+          </text>
+
+          <line
+            x1="168"
+            y1="60"
+            x2="206"
+            y2="86"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+          <line
+            x1="168"
+            y1="103"
+            x2="206"
+            y2="103"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+          <line
+            x1="168"
+            y1="158"
+            x2="206"
+            y2="120"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+
+          <rect
+            x="212"
+            y="72"
+            width="150"
+            height="62"
+            rx="8"
+            fill="#ffffff"
+            stroke="#dadce0"
+          />
+          <text x="287" y="97" text-anchor="middle" class="fig-t">
+            normalise + dedupe
+          </text>
+          <text x="287" y="115" text-anchor="middle" class="fig-s">
+            one schema, one key
+          </text>
+
+          <line
+            x1="362"
+            y1="103"
+            x2="404"
+            y2="103"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+
+          <rect
+            x="410"
+            y="72"
+            width="120"
+            height="62"
+            rx="8"
+            fill="#ffffff"
+            stroke="#dadce0"
+          />
+          <text x="470" y="97" text-anchor="middle" class="fig-t">score</text>
+          <text x="470" y="115" text-anchor="middle" class="fig-s">
+            fixed weights
+          </text>
+
+          <line
+            x1="530"
+            y1="103"
+            x2="572"
+            y2="103"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+
+          <rect
+            x="578"
+            y="72"
+            width="100"
+            height="62"
+            rx="8"
+            fill="#ffffff"
+            stroke="#dadce0"
+          />
+          <text x="628" y="97" text-anchor="middle" class="fig-t">
+            static JSON
+          </text>
+          <text x="628" y="115" text-anchor="middle" class="fig-s">
+            GitHub Pages
+          </text>
+
+          <line
+            x1="678"
+            y1="103"
+            x2="712"
+            y2="103"
+            stroke="#9aa0a6"
+            stroke-width="1.6"
+            marker-end="url(#arrow)"
+          />
+
+          <rect
+            x="718"
+            y="72"
+            width="74"
+            height="62"
+            rx="8"
+            fill="#fef7e0"
+            stroke="#f0c36d"
+          />
+          <text x="755" y="97" text-anchor="middle" class="fig-t">you</text>
+          <text x="755" y="115" text-anchor="middle" class="fig-s">
+            in browser
+          </text>
+        </svg>
+        <figcaption>
+          Figure 1. Signals and scope are fetched by a scheduled job, scored
+          with fixed weights, written as static JSON, and personalised in your
+          browser. There is no server and no per-user computation cost.
+        </figcaption>
+      </figure>
+
+      <h3 class="subhead">Why payout reliability, not reward size</h3>
+      <p>
+        The largest prize on a page is not the prize most hunters can win. In a
+        survey of 159 bug bounty hunters, saturation ranked 10th and program age
+        13th among the factors they actually weigh, while poor responsiveness
+        and payout disputes were the two biggest problems they reported (Akgul
+        et al., arXiv:2301.04781). So the score leads with whether a program
+        responds and pays, then how crowded it is, and only then how large its
+        rewards are.
+      </p>
+
+      <figure class="figure">
+        <svg
+          class="figure-svg"
+          viewBox="0 0 640 250"
+          role="img"
+          aria-label="Line chart of relative bug discovery probability against program age, decaying as t to the power minus 0.40."
+        >
+          <line
+            x1="56"
+            y1="196"
+            x2="616"
+            y2="196"
+            stroke="#dadce0"
+            stroke-width="1.4"
+          />
+          <line
+            x1="56"
+            y1="24"
+            x2="56"
+            y2="196"
+            stroke="#dadce0"
+            stroke-width="1.4"
+          />
+          <line
+            x1="56"
+            y1="24"
+            x2="616"
+            y2="24"
+            stroke="#e8eaed"
+            stroke-dasharray="4 4"
+          />
+          <line
+            x1="56"
+            y1="110"
+            x2="616"
+            y2="110"
+            stroke="#e8eaed"
+            stroke-dasharray="4 4"
+          />
+
+          <polyline
+            fill="none"
+            stroke="#1a73e8"
+            stroke-width="2.6"
+            stroke-linejoin="round"
+            points="56,24 65,66 75,85 84,97 94,106 103,112 113,117 122,121 132,125 141,128 151,130 160,132 170,134 179,136 189,138 198,139 208,141 217,142 227,143 236,144 246,145 255,146 265,147 274,148 284,149 293,149 303,150 312,151 322,151 331,152 341,152 350,153 360,154 369,154 379,155 388,155 398,155 407,156 417,156 426,157 436,157 445,157 455,158 464,158 474,158 483,159 493,159 502,159 512,160 521,160 531,160 540,161 550,161 559,161 569,161 578,162 588,162 597,162 607,162 616,163"
+          />
+
+          <text x="56" y="216" class="fig-s" text-anchor="start">month 1</text>
+          <text x="616" y="216" class="fig-s" text-anchor="end">month 60</text>
+          <text x="210" y="44" class="fig-t">
+            relative discovery probability
+          </text>
+          <text x="470" y="70" class="fig-t">t^-0.40</text>
+          <text x="48" y="88" class="fig-s" text-anchor="end">1.0</text>
+          <text x="48" y="106" class="fig-s" text-anchor="end">0.8</text>
+          <text x="48" y="176" class="fig-s" text-anchor="end">0.2</text>
+        </svg>
+        <figcaption>
+          Figure 2. Discovery probability decays as t^-0.40 over the life of a
+          program. Maillart et al. fitted this across 35 public HackerOne
+          programs (R² = 0.79, arXiv:1608.03445). honeybee uses the measured
+          exponent instead of an arbitrary freshness bonus.
+        </figcaption>
+      </figure>
+
+      <div class="research-grid">
+        <article class="research">
+          <div class="research-tag">Age</div>
+          <h4>Maillart et al.</h4>
+          <p>
+            Discovery probability falls as <code>t^-0.40</code> after launch, so
+            an old program is not automatically a bad one, but a new one
+            genuinely is easier to enter.
+          </p>
+          <a
+            href="https://arxiv.org/abs/1608.03445"
+            target="_blank"
+            rel="noopener"
+            >arXiv:1608.03445</a
+          >
+        </article>
+        <article class="research">
+          <div class="research-tag">Hunter priorities</div>
+          <h4>Akgul et al.</h4>
+          <p>
+            In a survey of 159 hunters, responsiveness and payout disputes beat
+            prize size as the reasons hunters leave a program.
+          </p>
+          <a
+            href="https://arxiv.org/abs/2301.04781"
+            target="_blank"
+            rel="noopener"
+            >arXiv:2301.04781</a
+          >
+        </article>
+        <article class="research">
+          <div class="research-tag">Fairness</div>
+          <h4>Zheng et al.</h4>
+          <p>
+            Across 9,942 HackerOne reports, higher reputation won the better
+            outcome in 59.85% of near-identical pairs. Reputation is a
+            tiebreaker we cannot see fairly, so honeybee does not model it at
+            all.
+          </p>
+          <a
+            href="https://arxiv.org/abs/2511.18608"
+            target="_blank"
+            rel="noopener"
+            >arXiv:2511.18608</a
+          >
+        </article>
+      </div>
+
+      <h3 class="subhead">1. What is scored</h3>
+      <p>
+        Only HackerOne programs that offer bounties and are open to submissions.
+        At the last crawl that is
+        <b id="method-count">221</b> programs. Every other program, including
+        unpaid HackerOne VDPs, Bugcrowd, Intigriti, YesWeHack and direct
+        programs, appears in the <a href="app.html#catalog">Catalog</a> and is
+        never scored.
+      </p>
+
+      <h3 class="subhead">2. The ten signals</h3>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>HackerOne field</th>
+            <th>Used for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Age</td>
+            <td>launched_at</td>
+            <td>novelty decay</td>
+          </tr>
+          <tr>
+            <td>Reports in 90 days</td>
+            <td>reports_received_last_90_days</td>
+            <td>crowding</td>
+          </tr>
+          <tr>
+            <td>Resolved total</td>
+            <td>resolved_report_count</td>
+            <td>slop pressure</td>
+          </tr>
+          <tr>
+            <td>Response efficiency</td>
+            <td>response_efficiency_percentage</td>
+            <td>payout reliability, triage</td>
+          </tr>
+          <tr>
+            <td>Response status</td>
+            <td>response_efficiency_indicator</td>
+            <td>triage, penalties</td>
+          </tr>
+          <tr>
+            <td>Lifetime paid</td>
+            <td>formatted_total_bounties_paid_amount</td>
+            <td>context</td>
+          </tr>
+          <tr>
+            <td>Paid in 90 days</td>
+            <td>formatted_bounties_paid_last_90_days</td>
+            <td>payout reliability</td>
+          </tr>
+          <tr>
+            <td>Last resolved</td>
+            <td>last_report_resolved_at</td>
+            <td>recency</td>
+          </tr>
+          <tr>
+            <td>Average bounty</td>
+            <td>average_bounty_lower/upper_amount</td>
+            <td>value per competition</td>
+          </tr>
+          <tr>
+            <td>Scope size</td>
+            <td>structured_scopes.total_count</td>
+            <td>crowding denominator, breadth</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="subhead">3. The formula</h3>
+      <pre class="formula">
+novelty  = (age_months + 1) ^ -0.40
+crowding  = (reports_90d / 3) / max(scope_count, 1)
+inverse_crowd  = 1 / (1 + crowding ^ 1.2)
+payout_reliability = 0.5 * (efficiency / 100)
+  + 0.3 * (paid_90d > 0)
+  + 0.2 * exp(-days_since_resolved / 90)
+value_per_comp  = min(1, log1p(avg_bounty) / log1p(20000)) / (1 + crowding)
+triage_quality  = (efficiency / 100) * {1.0 ok, 0.75 missed, 0.5 failed}
+scope_breadth  = min(1, log1p(scope_count) / log1p(500))
+
+base  = 100 * (0.22 novelty + 0.22 inverse_crowd + 0.22 payout_reliability
+  + 0.16 value_per_comp + 0.11 triage_quality + 0.07 scope_breadth)
+score = clamp(base + penalties, 0, 100)</pre
+      >
+
+      <figure class="figure">
+        <div
+          class="wchart"
+          role="img"
+          aria-label="Weight chart: novelty 22 percent, inverse crowding 22, payout reliability 22, value per competition 16, triage quality 11, scope breadth 7."
+        >
+          <div class="wrow">
+            <span>Novelty</span><i style="width: 100%"></i><b>22%</b>
+          </div>
+          <div class="wrow">
+            <span>Inverse crowding</span><i style="width: 100%"></i><b>22%</b>
+          </div>
+          <div class="wrow">
+            <span>Payout reliability</span><i style="width: 100%"></i><b>22%</b>
+          </div>
+          <div class="wrow">
+            <span>Value per competition</span><i style="width: 73%"></i
+            ><b>16%</b>
+          </div>
+          <div class="wrow">
+            <span>Triage quality</span><i style="width: 50%"></i><b>11%</b>
+          </div>
+          <div class="wrow">
+            <span>Scope breadth</span><i style="width: 32%"></i><b>7%</b>
+          </div>
+        </div>
+        <figcaption>
+          Figure 3. The six components sum to 100. Two thirds of the score is
+          payout behaviour and competition, not reward size.
+        </figcaption>
+      </figure>
+
+      <h3 class="subhead">4. Penalties</h3>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Condition</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Response indicator failed</td>
+            <td>-25</td>
+          </tr>
+          <tr>
+            <td>Response indicator missed</td>
+            <td>-10</td>
+          </tr>
+          <tr>
+            <td>More than 1,000 reports in 90 days</td>
+            <td>-20</td>
+          </tr>
+          <tr>
+            <td>More than 3,000 reports in 90 days</td>
+            <td>-10</td>
+          </tr>
+          <tr>
+            <td>Nothing resolved in 180 days</td>
+            <td>-15</td>
+          </tr>
+          <tr>
+            <td>Slop risk at or above 0.6</td>
+            <td>-10</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="subhead">5. Badges</h3>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Will they pay</th>
+            <th>Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pays reliably</td>
+            <td>
+              indicator ok, efficiency at or above 80, paid in 90 days, resolved
+              in 30 days
+            </td>
+          </tr>
+          <tr>
+            <td>Pays slowly</td>
+            <td>enough signal, but slower than the bar above</td>
+          </tr>
+          <tr>
+            <td>Missed targets</td>
+            <td>
+              indicator missed, so the program is blowing its own stated SLAs
+            </td>
+          </tr>
+          <tr>
+            <td>Risky</td>
+            <td>
+              indicator failed, efficiency below 50, or dormant more than 180
+              days
+            </td>
+          </tr>
+          <tr>
+            <td>Unknown</td>
+            <td>not enough signal. Shown honestly, not scored favorably</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="subhead">6. Personalisation, and why it cannot lie</h3>
+      <p>
+        Your profile changes the order, never the facts. Four rules keep it
+        honest, and <code>public/engine.test.js</code> asserts each one.
+      </p>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Rule</th>
+            <th>Effect</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Experience level</td>
+            <td>
+              scales every self-rating: beginner x0.5, intermediate x0.85,
+              advanced x1.0
+            </td>
+          </tr>
+          <tr>
+            <td>Profile strength</td>
+            <td>
+              personal weight = 15% x completeness, so a half-filled profile
+              applies half-strength
+            </td>
+          </tr>
+          <tr>
+            <td>Bounded influence</td>
+            <td>
+              a personal score moves at most plus or minus 12 points from the
+              population score
+            </td>
+          </tr>
+          <tr>
+            <td>Skill gap</td>
+            <td>
+              simulates learning a weak surface to 3/5 and counts the programs
+              that would enter your top 50
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout-note">
+        <b>Worked example.</b> A program scores 68.6 for everyone. If your
+        profile is 80% complete and your effective stack matches, your personal
+        score can land anywhere between 56.6 and 80.6. The delta is printed in
+        every expanded card, together with the cap. A profile can reorder the
+        list; it cannot turn a 40 into a 90.
+      </div>
+      <p>
+        Surface mismatch is share-weighted over the two largest surfaces: an
+        effective rating at or below 1 costs 18 points times its share, a rating
+        of 2 costs 8. Tools amplify a surface you already practice and can never
+        create skill from zero. Short sessions discount very large scopes.
+      </p>
+
+      <h3 id="catalog-method" class="subhead">
+        7. The Catalog: breadth with honest gaps
+      </h3>
+      <p>
+        The Catalog is the honest answer to a simple question: what else is out
+        there, and what do we actually know about it? It merges four open
+        sources: the arkadiyt mirrors for HackerOne, Bugcrowd, Intigriti and
+        YesWeHack, plus the lissy93 lists for platform and direct programs. Rows
+        are deduplicated on <code>platform:slug</code> and merged, so a program
+        listed twice keeps the better field from each source.
+      </p>
+      <div id="cat-coverage-figure" class="figure">
+        <div class="covbars" id="covbars">
+          <div class="covbar-empty">Loading catalog counts.</div>
+        </div>
+        <p class="figure-cap" id="cov-caption">
+          Figure 4. Catalog rows by source and the fields each row can prove.
+        </p>
+      </div>
+      <pre class="formula">
+points  = 45 * bounty_known
+        + 30 * min(1, log1p(scope_count) / log1p(400))
+        + 15 * min(1, scope_types / 6)
+        + 10 * disclosure_terms
+        + 10 * min(1, log1p(max_payout) / log1p(1000000))
+
+order   = 100 * points / sum(weights of known fields)</pre
+      >
+      <p>
+        Points are normalised over the fields that exist, so a missing payout
+        figure neither helps nor hurts. Every row prints a coverage percentage
+        over four checks: bounty status, payout, scope and disclosure terms. The
+        Catalog also tracks when honeybee first saw each program, which is what
+        powers the "Latest additions" ordering. That date means first seen by
+        us, not the program's launch date, and it is labelled that way.
+      </p>
+      <div class="callout-note warn">
+        <b>What the Catalog is not.</b> It is not a payout prediction. Catalog
+        rows carry no report counts, no response efficiency and no payout
+        history, so a high catalog order is only a statement that the published
+        fields look broad and open. Missing data is printed as missing, never as
+        a good score.
+      </div>
+
+      <h3 class="subhead">8. How to verify us</h3>
+      <ol class="verify">
+        <li>
+          Download <a href="data/programs.json" download>programs.json</a>.
+          Every signal, weight, penalty and component contribution is in the
+          file.
+        </li>
+        <li>
+          Recompute any row by hand with the formula above. The components sum
+          to the score before penalties, and penalties are listed per row.
+        </li>
+        <li>
+          Run the personalisation tests:
+          <code>node public/engine.test.js</code>. They assert bounds,
+          monotonicity, cold start and the beginner guard.
+        </li>
+        <li>
+          Read the scoring code: <code>pipeline/score.py</code> and
+          <code>pipeline/badges.py</code>. There is no model, no ranking service
+          and no hidden tiebreaker.
+        </li>
+        <li>
+          Check the network panel. The page loads static files and makes no
+          calls with your profile. Personalisation runs locally and is stored in
+          <code>localStorage</code>.
+        </li>
+      </ol>
+
+      <h3 class="subhead">9. Research</h3>
+      <ol class="refs">
+        <li>
+          Maillart, Zhao, Grossklags, Chuang.
+          <i
+            >Given Enough Eyeballs, All Bugs Are Shallow? Revisiting Eric
+            Raymond with Bug Bounty Programs.</i
+          >
+          <a
+            href="https://arxiv.org/abs/1608.03445"
+            target="_blank"
+            rel="noopener"
+            >arXiv:1608.03445</a
+          >. Source of the t^-0.40 novelty exponent.
+        </li>
+        <li>
+          Akgul et al.
+          <i>Bug hunters' perspectives on bug bounty programs.</i>
+          <a
+            href="https://arxiv.org/abs/2301.04781"
+            target="_blank"
+            rel="noopener"
+            >arXiv:2301.04781</a
+          >. 159 hunters. Source of the payout reliability and crowding
+          priorities.
+        </li>
+        <li>
+          Zheng et al. <i>An analysis of 9,942 HackerOne reports.</i>
+          <a
+            href="https://arxiv.org/abs/2511.18608"
+            target="_blank"
+            rel="noopener"
+            >arXiv:2511.18608</a
+          >. Source of the decision not to model reporter reputation.
+        </li>
+      </ol>
+
+      <h3 class="subhead">10. Limits</h3>
+      <ul class="limits">
+        <li>
+          Signals come from unauthenticated HackerOne endpoints. Anything behind
+          a login is absent.
+        </li>
+        <li>
+          Catalog rows carry no report counts. That is why they are not scored.
+        </li>
+        <li>
+          Slop risk is a single-snapshot proxy and is labeled experimental.
+        </li>
+        <li>
+          Scope data is refreshed from community mirrors every 30 minutes
+          upstream, and merged here every 6 hours.
+        </li>
+        <li>
+          First-seen dates start at the first crawl. Until two crawls exist,
+          "Latest additions" means "everything", and the UI says so.
+        </li>
+      </ul>
+    </main>
+
+    <footer class="site-foot">
+      <div class="site-foot-inner">
+        <div>
+          <b>honeybee</b>
+          <p>
+            Bug bounty intelligence. No accounts, no tracking, no paid
+            placement.
+          </p>
+        </div>
+        <nav>
+          <a href="app.html">Ranked</a>
+          <a href="app.html#catalog">Catalog</a>
+          <a href="method.html">Method</a>
+          <a href="data/programs.json" download>Data</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="theme.js"></script>
+    <script src="page.js"></script>
+  </body>
+</html>

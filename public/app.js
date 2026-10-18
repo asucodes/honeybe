@@ -105,6 +105,7 @@
         render();
         renderRail();
         loadCatalog();
+        applyHash();
       })
       .catch(function (err) {
         $("#list").innerHTML =
@@ -113,6 +114,13 @@
           ". Run <code>python -m pipeline.run</code> then reload.</p></div>";
         $("#meta").textContent = "offline";
       });
+  }
+
+  function applyHash() {
+    var hash = (window.location.hash || "").replace("#", "");
+    if (hash === "catalog" && state.tab !== "catalog") {
+      setTab("catalog");
+    }
   }
 
   function maybeOnboard() {
@@ -589,8 +597,7 @@
           '<li><a href="#catalog">Catalog</a></li>' +
           '<li><a href="#cat-top">Catalog top 10</a></li>' +
           '<li><a href="#cat-latest">Latest additions</a></li>' +
-          '<li><a href="#cat-all">All catalog programs</a></li>' +
-          '<li><a href="#method">Method and research</a></li>';
+          '<li><a href="#cat-all">All catalog programs</a></li>';
       }
       if (summary) {
         summary.innerHTML =
@@ -615,8 +622,7 @@
         toc.innerHTML =
           '<li><a href="#snapshot">Snapshot</a></li>' +
           '<li><a href="#top10">Your top 10</a></li>' +
-          '<li><a href="#all">All programs</a></li>' +
-          '<li><a href="#method">Method and research</a></li>';
+          '<li><a href="#all">All programs</a></li>';
       }
       if (summary) summary.innerHTML = RANKED_SUMMARY;
     }
@@ -2068,12 +2074,7 @@
         e.preventDefault();
         var target = el.getAttribute("data-tab-link");
         if (target === "method") {
-          $$(".appnav-link").forEach(function (b) {
-            b.classList.toggle("active", b === el);
-          });
-          var anchor = document.getElementById("method");
-          if (anchor)
-            anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+          window.location.href = "method.html";
           return;
         }
         setTab(target);
@@ -2128,6 +2129,8 @@
         $("#search").focus();
       }
     });
+
+    window.addEventListener("hashchange", applyHash);
 
     $("#save-profile").addEventListener("click", function () {
       saveProfile(window.HBE.migrateProfile(readModal()));
