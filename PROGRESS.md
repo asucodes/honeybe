@@ -300,6 +300,24 @@ Known source defects (handled, not hidden):
   What's new baseline state and sample rendering, footer links, light and dark
   home, catalog, and the 29-assertion engine test.
 
+### 2026-10-20 - Splash removed, brand renamed, real logo, GitHub button
+- Removed the home splash completely: markup, `splash.js`, the CSS block, the
+  app.js fallback and the CSS fallback. Home renders immediately.
+- Renamed the visible brand to `honeybe` for honeybe.tech. Internal storage
+  keys stay `honeybee.*` so existing themes and profiles survive.
+- Replaced `logo.svg` with `logo.png`, cropped from the supplied icy blue pixel
+  bee honeycomb image so the bee stays legible at 30px. Used in the app bar,
+  onboarding dialog and favicon.
+- Removed the `bug bounty intelligence` subtitle from the app bar brand.
+- Removed the `Intermediate · 100% strength` profile pill from the app bar.
+- Removed the `scored signals`, `catalog scope`, `community mirrors` and
+  `program lists` captions under the source logos.
+- Added a top-right GitHub button with the GitHub mark and `Star on GitHub`
+  label on home and Method, plus an icon-only version in the app bar.
+- Verified: 29-assertion engine test, no splash on first paint, home and app
+  headers at 1440px and 390px, onboarding logo, source strip, and the live
+  change feed (one real Vercel scope event from the latest crawl).
+
 ---
 
 ## Next

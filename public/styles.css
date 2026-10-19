@@ -115,6 +115,7 @@ h4 {
   width: 30px;
   height: 30px;
   flex-shrink: 0;
+  border-radius: 7px;
 }
 .brand-text {
   display: flex;
@@ -126,11 +127,6 @@ h4 {
   font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.2px;
-}
-.brand-sub {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.2px;
 }
 
 .appnav {
@@ -224,16 +220,6 @@ h4 {
   color: var(--muted2);
   white-space: nowrap;
   margin-left: 8px;
-}
-
-.profile-pill {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--blue-d);
-  background: var(--blue-l);
-  border-radius: 999px;
-  padding: 3px 10px;
-  white-space: nowrap;
 }
 
 .btn-text {
@@ -1252,6 +1238,22 @@ h4 {
 .btn.full {
   width: 100%;
 }
+.star-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.star-btn .ic {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+.star-icon .ic {
+  fill: currentColor;
+}
+.star-icon:hover .ic {
+  fill: var(--blue);
+}
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -1911,112 +1913,6 @@ body.modal-open {
 }
 
 /* ==========================================================================
-  splash
-  ========================================================================== */
-
-.splash {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  background: #051733;
-  background-image: radial-gradient(
-      circle at 50% 42%,
-      rgba(23, 86, 178, 0.32),
-      transparent 58%
-    ),
-    repeating-linear-gradient(
-      60deg,
-      rgba(255, 255, 255, 0.03) 0 2px,
-      transparent 2px 90px
-    ),
-    repeating-linear-gradient(
-      -60deg,
-      rgba(255, 255, 255, 0.03) 0 2px,
-      transparent 2px 90px
-    );
-  display: grid;
-  place-items: center;
-  color: #fff;
-  opacity: 1;
-  transition: opacity 0.9s ease;
-  cursor: pointer;
-}
-.splash.hide {
-  opacity: 0;
-  pointer-events: none;
-}
-/* CSS fallback: never trap the page behind the splash if JS fails. */
-@keyframes splashOut {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-.splash {
-  animation: splashOut 0.9s ease 3s forwards;
-}
-.splash-inner {
-  text-align: center;
-  padding: 24px;
-}
-
-.splash-name {
-  font-family: "Dancing Script", "Segoe Script", cursive;
-  font-size: clamp(72px, 14vw, 148px);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.02;
-  opacity: 0;
-  animation: riseIn 0.7s ease 0.35s forwards;
-}
-.splash-sub {
-  margin-top: 2px;
-  font-size: clamp(14px, 1.8vw, 19px);
-  font-weight: 300;
-  letter-spacing: 2.6px;
-  text-transform: none;
-  color: rgba(255, 255, 255, 0.66);
-  opacity: 0;
-  animation: riseIn 0.7s ease 0.6s forwards;
-}
-@keyframes riseIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.splash-skip {
-  position: absolute;
-  bottom: 28px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 11px;
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-  opacity: 0;
-  animation: riseIn 0.6s ease 1.1s forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .splash-name,
-  .splash-sub,
-  .splash-skip {
-    animation: none;
-    opacity: 1;
-  }
-  .splash {
-    animation: splashOut 0.4s ease 1.2s forwards;
-  }
-}
-
-/* ==========================================================================
   catalog
   ========================================================================== */
 
@@ -2484,6 +2380,11 @@ body.modal-open {
   width: 40px;
   height: 40px;
 }
+.onboard-bee img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
 #onboard h2 {
   text-align: center;
   font-size: 24px;
@@ -2699,7 +2600,6 @@ body.modal-open {
 }
 
 @media (max-width: 1000px) {
-  .brand-sub,
   .avatar,
   .appbar-search kbd {
     display: none;
@@ -2726,9 +2626,6 @@ body.modal-open {
   .appbar-inner {
     padding: 0 12px;
     gap: 4px;
-  }
-  .brand-sub {
-    display: none;
   }
   .appnav {
     margin-left: 8px;
@@ -3327,15 +3224,6 @@ html[data-theme="dark"] .appbar {
   text-overflow: ellipsis;
 }
 
-.source small {
-  display: block;
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .section {
   padding-top: 64px;
   padding-bottom: 64px;
@@ -3872,6 +3760,14 @@ html[data-theme="dark"] .appbar {
     display: none;
   }
 
+  .star-btn {
+    padding: 0 9px;
+  }
+
+  .star-btn .star-label {
+    display: none;
+  }
+
   .preview-row {
     grid-template-columns: 30px minmax(0, 1fr) 58px;
   }
@@ -3896,10 +3792,6 @@ html[data-theme="dark"] .appbar {
 }
 
 @media (max-width: 760px) {
-  .brand-sub {
-    display: none;
-  }
-
   .appbar-inner {
     padding: 0 12px;
     gap: 6px;
@@ -3983,8 +3875,15 @@ html[data-theme="dark"] .appbar {
     display: none;
   }
 
-  .appbar-meta,
-  #profile-pill {
+  .star-btn {
+    padding: 0 9px;
+  }
+
+  .star-btn .star-label {
+    display: none;
+  }
+
+  .appbar-meta {
     display: none;
   }
 

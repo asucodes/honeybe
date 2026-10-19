@@ -1,4 +1,4 @@
-/* honeybee UI - vanilla JS, no build step */
+/* honeybe UI - vanilla JS, no build step */
 (function () {
   "use strict";
 
@@ -79,10 +79,8 @@
   function init() {
     loadProfile();
     bindEvents();
-    renderProfilePill();
     tickClock();
     bumpVisits();
-    splash();
     maybeOnboard();
     fetch("data/programs.json")
       .then(function (r) {
@@ -134,7 +132,9 @@
         var btn = $("#news-btn");
         if (btn)
           btn.title = state.news.length
-            ? state.news.length + " changes since the last crawls"
+            ? state.news.length +
+              (state.news.length === 1 ? " change" : " changes") +
+              " since the last crawls"
             : "What's new";
         var modal = $("#news-modal");
         if (modal && modal.classList.contains("open")) renderNews();
@@ -158,14 +158,16 @@
     var events = state.news || [];
     if (sub) {
       sub.textContent = events.length
-        ? events.length + " changes across recent crawls"
+        ? events.length +
+          (events.length === 1 ? " change" : " changes") +
+          " across recent crawls"
         : "";
     }
     if (!body) return;
     if (!events.length) {
       body.innerHTML =
         '<div class="news-empty"><h3>No changes recorded yet</h3>' +
-        "<p>honeybee compares every crawl with the previous one. New programs, new scope assets and removed scope will appear here from the next run.</p>" +
+        "<p>honeybe compares every crawl with the previous one. New programs, new scope assets and removed scope will appear here from the next run.</p>" +
         '<p class="hint">The first crawl is a baseline. That is deliberate: it avoids presenting 2,900 existing programs as if they were new.</p></div>';
       return;
     }
@@ -233,28 +235,6 @@
     } catch (e) {}
     if (state.profile || seen) return;
     modal.classList.add("open");
-  }
-
-  function splash() {
-    var el = $("#splash");
-    if (!el) return;
-    var reduce = false;
-    try {
-      reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    } catch (e) {}
-    var done = false;
-    var hide = function () {
-      if (done) return;
-      done = true;
-      el.classList.add("hide");
-      document.removeEventListener("keydown", hide);
-      setTimeout(function () {
-        el.remove();
-      }, 950);
-    };
-    el.addEventListener("click", hide);
-    document.addEventListener("keydown", hide);
-    setTimeout(hide, reduce ? 1200 : 5000);
   }
 
   function loadCatalog() {
@@ -339,24 +319,6 @@
     } catch (e) {
       /* private mode */
     }
-    renderProfilePill();
-  }
-
-  function renderProfilePill() {
-    var el = $("#profile-pill");
-    if (!window.HBE.hasProfile(state.profile)) {
-      el.innerHTML = "";
-      return;
-    }
-    var lvl =
-      window.HBE.LEVEL_LABELS[state.profile.capability.level] || "Intermediate";
-    var pct = Math.round(window.HBE.completeness(state.profile) * 100);
-    el.innerHTML =
-      '<span class="profile-pill">' +
-      esc(lvl) +
-      " · " +
-      pct +
-      "% strength</span>";
   }
 
   /* ---------------- stats ---------------- */
@@ -893,11 +855,11 @@
     var latest = rows.slice().sort(catComparator("latest")).slice(0, 10);
     if (counts.baseline) {
       $("#cat-latest-note").textContent =
-        "Day one baseline: every catalog program was first seen on the same crawl, so this list is not yet a change feed. From the next crawl it lists programs honeybee is seeing for the first time.";
+        "Day one baseline: every catalog program was first seen on the same crawl, so this list is not yet a change feed. From the next crawl it lists programs honeybe is seeing for the first time.";
     } else {
       $("#cat-latest-note").textContent =
         nf(counts.new_since_last) +
-        " programs are new since the last crawl. First seen means first seen by honeybee, not the program launch date, because none of the catalog sources publish one.";
+        " programs are new since the last crawl. First seen means first seen by honeybe, not the program launch date, because none of the catalog sources publish one.";
     }
     $("#cat-latest").innerHTML = latest.map(catLatestRow).join("");
 
@@ -2051,7 +2013,7 @@
     var blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "honeybee-compare.csv";
+    a.download = "honeybe-compare.csv";
     a.click();
     URL.revokeObjectURL(a.href);
   }

@@ -28,7 +28,7 @@ COMMITS_API = (
 
 TIMEOUT = 120
 HEADERS = {
-    "User-Agent": "honeybee/0.1 (+https://github.com/)",
+    "User-Agent": "honeybe/0.1 (+https://github.com/)",
     "Accept": "application/vnd.github+json",
 }
 

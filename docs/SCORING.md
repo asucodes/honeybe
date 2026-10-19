@@ -240,7 +240,7 @@ None of the catalog sources publish a launch date, so "latest" cannot mean
 "newest program". Instead the pipeline stores the first crawl that saw each
 `platform:slug` in `data/cache/catalog_seen.json` and writes `first_seen` and
 `new` onto every row. The Catalog exposes a "Latest additions" ordering on that
-date. It means first seen by honeybee, the UI says so, and the first crawl is a
+date. It means first seen by honeybe, the UI says so, and the first crawl is a
 baseline where every row shares one date.
 
 ## Design principles

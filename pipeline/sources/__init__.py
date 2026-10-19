@@ -1,1 +1,1 @@
-"""Data sources for honeybee."""
+"""Data sources for honeybe."""

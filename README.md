@@ -1,4 +1,4 @@
-# honeybee
+# honeybe
 
 Bug bounty opportunity intelligence for mid-level hunters.
 
@@ -6,14 +6,14 @@ Most tools rank programs by **reward** and **freshness**. Research on 159 hunter
 saturation ranks 10th and age 13th in their own decisions - while the two biggest
 challenges they report are **poor responsiveness** and **payout disputes**.
 
-honeybee ranks on **whether the program will actually pay you**, and personalises the
+honeybe ranks on **whether the program will actually pay you**, and personalises the
 ranking to the stack and constraints you actually have.
 
 ## Pages
 
 | Page | What it is |
 |---|---|
-| `index.html` | Home. What honeybee solves, the live counts, the sources, the research basis and the live top five. |
+| `index.html` | Home. What honeybe solves, the live counts, the sources, the research basis and the live top five. |
 | `app.html` | The index. Ranked programs and the Catalog, with search, filters, comparison and match cards. |
 | `method.html` | Method and research. Every signal, formula, penalty, bound and citation, plus verification steps. |
 
@@ -86,7 +86,7 @@ public/
   theme.js  # light/dark theme, stored in localStorage
   engine.js  # personalization module (framework-agnostic)
   llms.txt  # data guide for models and agents
-  logo.svg  # honeycomb mark
+  logo.png  # honeycomb bee mark
 docs/SCORING.md  # formulas + research citations
 ```
 

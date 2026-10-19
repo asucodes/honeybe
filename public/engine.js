@@ -1,4 +1,4 @@
-/* honeybee personalization engine, v2
+/* honeybe personalization engine, v2
  * ---------------------------------------------------------------
  * Framework-agnostic, dependency-free. Exposes `window.HBE`.
  * Designed for reuse outside this app (e.g. Weven).

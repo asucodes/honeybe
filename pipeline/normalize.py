@@ -1,6 +1,6 @@
 """Unified program schema and normalisation helpers.
 
-Every program in honeybee, from any source, ends up in the shape produced by
+Every program in honeybe, from any source, ends up in the shape produced by
 ``normalize_hackerone`` below. Sources that cannot fill a field leave it ``None``
 and say so in ``quality`` — missing data must never silently look like a bad score.
 """
@@ -64,7 +64,7 @@ def normalize_hackerone(
     scope_by_handle: dict[str, list[dict[str, Any]]],
     now: datetime,
 ) -> dict[str, Any]:
-    """Turn one HackerOne GraphQL node into the unified honeybee record."""
+    """Turn one HackerOne GraphQL node into the unified honeybe record."""
     handle = node["handle"]
     scope = scope_by_handle.get(handle, [])
 

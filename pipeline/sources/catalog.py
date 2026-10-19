@@ -30,7 +30,7 @@ import yaml
 
 CACHE_DIR = Path("data/cache")
 TIMEOUT = 120
-HEADERS = {"User-Agent": "honeybee/0.2 (+https://github.com/)"}
+HEADERS = {"User-Agent": "honeybe/0.2 (+https://github.com/)"}
 
 ARKADIYT = "https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/main/data"
 LISSY = "https://raw.githubusercontent.com/lissy93/bug-bounties/main"

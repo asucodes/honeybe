@@ -30,7 +30,7 @@ def main() -> int:
     now = datetime.now(timezone.utc)
     session = requests.Session()
 
-    print("honeybee · crawl start")
+    print("honeybe · crawl start")
 
     print("  → hackerone signals")
     nodes, total = hackerone.fetch_programs(session)
@@ -54,7 +54,7 @@ def main() -> int:
     emit.write_outputs(
         programs,
         {
-            "name": "honeybee",
+            "name": "honeybe",
             "version": "0.2.0",
             "cadence_hours": CADENCE_HOURS,
             "scoring": "population v1 (HackerOne signals)",

@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Method and research - honeybee</title>
+    <title>Method and research - honeybe</title>
     <meta
       name="description"
-      content="How honeybee scores bug bounty programs: signals, formulas, penalties, personalisation bounds, catalog ordering, research citations and verification steps."
+      content="How honeybe scores bug bounty programs: signals, formulas, penalties, personalisation bounds, catalog ordering, research citations and verification steps."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="icon" type="image/png" href="logo.png" />
     <script>
       (function () {
         try {
@@ -35,10 +35,9 @@
     <header class="appbar">
       <div class="appbar-inner">
         <a class="brand" href="index.html">
-          <img class="brand-mark" src="logo.svg" alt="honeybee" />
+          <img class="brand-mark" src="logo.png" alt="honeybe" />
           <span class="brand-text">
-            <span class="brand-name">honeybee</span>
-            <span class="brand-sub">bug bounty intelligence</span>
+            <span class="brand-name">honeybe</span>
           </span>
         </a>
         <nav class="appnav" aria-label="Sections">
@@ -68,6 +67,20 @@
             />
           </svg>
         </button>
+        <a
+          class="btn ghost sm star-btn"
+          href="https://github.com/"
+          target="_blank"
+          rel="noopener"
+          title="Star honeybe on GitHub"
+        >
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2z"
+            />
+          </svg>
+          <span class="star-label">Star on GitHub</span>
+        </a>
         <a class="btn primary sm top-explore" href="app.html"
           >Explore programs</a
         >
@@ -76,13 +89,13 @@
 
     <main class="page-doc">
       <div class="crumbs page-crumbs">
-        <a href="index.html">honeybee</a>
+        <a href="index.html">honeybe</a>
         <span class="sep">›</span>
         <span class="crumb-current">Method and research</span>
       </div>
       <h1>Method and research</h1>
       <p class="lede method-lede">
-        Most bug bounty lists rank by reward size and freshness. honeybee ranks
+        Most bug bounty lists rank by reward size and freshness. honeybe ranks
         by whether a program actually pays, how crowded it is, and whether its
         scope fits the skills you really have. Every step below is arithmetic,
         published, and reproducible from the JSON this site serves.
@@ -362,7 +375,7 @@
         <figcaption>
           Figure 2. Discovery probability decays as t^-0.40 over the life of a
           program. Maillart et al. fitted this across 35 public HackerOne
-          programs (R² = 0.79, arXiv:1608.03445). honeybee uses the measured
+          programs (R² = 0.79, arXiv:1608.03445). honeybe uses the measured
           exponent instead of an arbitrary freshness bonus.
         </figcaption>
       </figure>
@@ -403,7 +416,7 @@
           <p>
             Across 9,942 HackerOne reports, higher reputation won the better
             outcome in 59.85% of near-identical pairs. Reputation is a
-            tiebreaker we cannot see fairly, so honeybee does not model it at
+            tiebreaker we cannot see fairly, so honeybe does not model it at
             all.
           </p>
           <a
@@ -702,7 +715,7 @@ order   = 100 * points / sum(weights of known fields)</pre
         Points are normalised over the fields that exist, so a missing payout
         figure neither helps nor hurts. Every row prints a coverage percentage
         over four checks: bounty status, payout, scope and disclosure terms. The
-        Catalog also tracks when honeybee first saw each program, which is what
+        Catalog also tracks when honeybe first saw each program, which is what
         powers the "Latest additions" ordering. That date means first seen by
         us, not the program's launch date, and it is labelled that way.
       </p>
@@ -805,7 +818,7 @@ order   = 100 * points / sum(weights of known fields)</pre
     <footer class="site-foot">
       <div class="site-foot-inner">
         <div class="foot-brand">
-          <b>honeybee</b>
+          <b>honeybe</b>
           <p>
             Bug bounty intelligence. No accounts, no tracking, no paid
             placement.

@@ -1,6 +1,6 @@
-# honeybee
+# honeybe
 
-honeybee is an open, static bug bounty opportunity index. It ranks programs on
+honeybe is an open, static bug bounty opportunity index. It ranks programs on
 whether they actually pay, how crowded they are, and whether the scope matches
 a researcher's own skills. It runs from GitHub Pages with a crawl every six
 hours. There is no API key and no account.
@@ -54,7 +54,7 @@ adjustment is shown in the interface.
 - Use `events.json` to detect changes instead of re-crawling the sources.
 - Do not infer that a catalog row pays. Check `offers_bounty`, `max_payout`,
   and the source URL first.
-- Attribution: link back to the honeybee index when republishing substantial
+- Attribution: link back to the honeybe index when republishing substantial
   parts of the dataset.
 
 ## Source code and contact

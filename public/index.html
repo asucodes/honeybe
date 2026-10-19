@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>honeybee - bug bounty intelligence</title>
+    <title>honeybe - bug bounty intelligence</title>
     <meta
       name="description"
-      content="honeybee aggregates bug bounty programs from HackerOne, Bugcrowd, Intigriti and YesWeHack, then ranks them on payout reliability, crowding and your own stack."
+      content="honeybe aggregates bug bounty programs from HackerOne, Bugcrowd, Intigriti and YesWeHack, then ranks them on payout reliability, crowding and your own stack."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="icon" type="image/png" href="logo.png" />
     <script>
       (function () {
         try {
@@ -32,22 +32,12 @@
     </script>
   </head>
   <body class="page-home">
-    <!-- ===================== SPLASH ===================== -->
-    <div class="splash" id="splash" aria-hidden="true">
-      <div class="splash-inner">
-        <div class="splash-name">honeybee</div>
-        <div class="splash-sub">bug bounty intelligence</div>
-      </div>
-      <div class="splash-skip">click anywhere to skip</div>
-    </div>
-
     <header class="appbar home-bar">
       <div class="appbar-inner">
         <a class="brand" href="index.html">
-          <img class="brand-mark" src="logo.svg" alt="honeybee" />
+          <img class="brand-mark" src="logo.png" alt="honeybe" />
           <span class="brand-text">
-            <span class="brand-name">honeybee</span>
-            <span class="brand-sub">bug bounty intelligence</span>
+            <span class="brand-name">honeybe</span>
           </span>
         </a>
 
@@ -81,6 +71,20 @@
             />
           </svg>
         </button>
+        <a
+          class="btn ghost sm star-btn"
+          href="https://github.com/"
+          target="_blank"
+          rel="noopener"
+          title="Star honeybe on GitHub"
+        >
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2z"
+            />
+          </svg>
+          <span class="star-label">Star on GitHub</span>
+        </a>
         <a class="btn primary sm home-explore" href="app.html"
           >Explore programs</a
         >
@@ -261,27 +265,27 @@
           <div class="source-row">
             <span class="source">
               <img src="logos/hackerone.png" alt="HackerOne" />
-              <span><b>HackerOne</b><small>scored signals</small></span>
+              <b>HackerOne</b>
             </span>
             <span class="source">
               <img src="logos/bugcrowd.png" alt="Bugcrowd" />
-              <span><b>Bugcrowd</b><small>catalog scope</small></span>
+              <b>Bugcrowd</b>
             </span>
             <span class="source">
               <img src="logos/intigriti.png" alt="Intigriti" />
-              <span><b>Intigriti</b><small>catalog scope</small></span>
+              <b>Intigriti</b>
             </span>
             <span class="source">
               <img src="logos/yeswehack.png" alt="YesWeHack" />
-              <span><b>YesWeHack</b><small>catalog scope</small></span>
+              <b>YesWeHack</b>
             </span>
             <span class="source">
               <img src="logos/arkadiyt.png" alt="arkadiyt" />
-              <span><b>arkadiyt</b><small>community mirrors</small></span>
+              <b>arkadiyt</b>
             </span>
             <span class="source">
               <img src="logos/lissy93.png" alt="lissy93" />
-              <span><b>lissy93</b><small>program lists</small></span>
+              <b>lissy93</b>
             </span>
           </div>
         </div>
@@ -352,7 +356,7 @@
         <h2 class="section-title">Prize size is not the signal.</h2>
         <p class="section-lede">
           The biggest number on a program page is not the number most hunters
-          can win. honeybee ranks on the three things that decide whether a
+          can win. honeybe ranks on the three things that decide whether a
           weekend turns into a payout.
         </p>
         <div class="solve-grid">
@@ -378,7 +382,7 @@
             <div class="solve-kicker">02 · Can you get in?</div>
             <h3>Crowding, per asset</h3>
             <p>
-              Raw report counts punish huge scopes. honeybee divides reports by
+              Raw report counts punish huge scopes. honeybe divides reports by
               assets, so a broad program is not treated like a crowded one.
             </p>
             <div class="solve-ui bars-ui">
@@ -447,7 +451,7 @@
               <h4>Zheng et al.</h4>
               <p>
                 Across 9,942 reports, reputation won 59.85% of near-identical
-                pairs. honeybee does not model it, because you cannot see it
+                pairs. honeybe does not model it, because you cannot see it
                 fairly.
               </p>
               <a
@@ -497,7 +501,7 @@
     <footer class="site-foot">
       <div class="site-foot-inner">
         <div class="foot-brand">
-          <b>honeybee</b>
+          <b>honeybe</b>
           <p>
             Bug bounty intelligence. No accounts, no tracking, no paid
             placement.
@@ -555,7 +559,6 @@
     </footer>
 
     <script src="theme.js"></script>
-    <script src="splash.js"></script>
     <script src="home.js"></script>
   </body>
 </html>

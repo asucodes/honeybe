@@ -1,6 +1,6 @@
 """HackerOne public GraphQL source.
 
-This is the only source in honeybee that provides scoring *signals*.
+This is the only source in honeybe that provides scoring *signals*.
 
 Verified live on 2026-10-20:
     220 paid + open programs
