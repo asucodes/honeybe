@@ -20,6 +20,8 @@
     catalogPlatform: "all",
     catalogIncludeScored: false,
     catSort: "best",
+    surfaces: new Set(),
+    news: [],
     gapCache: null,
   };
 
@@ -100,11 +102,14 @@
         });
         $("#count-ranked").textContent = nf(state.programs.length);
         $("#count-catalog").textContent = "soon";
+        renderSurfaceCounts();
+        collapseMobileFilters();
         renderStats();
         renderTop10();
         render();
         renderRail();
         loadCatalog();
+        loadNews();
         applyHash();
       })
       .catch(function (err) {
@@ -116,10 +121,106 @@
       });
   }
 
+  function loadNews() {
+    fetch("data/events.json")
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (payload) {
+        state.news = (payload && payload.events) || [];
+        state.newsMeta = payload || null;
+        var dot = $("#news-dot");
+        if (dot) dot.hidden = state.news.length === 0;
+        var btn = $("#news-btn");
+        if (btn)
+          btn.title = state.news.length
+            ? state.news.length + " changes since the last crawls"
+            : "What's new";
+        var modal = $("#news-modal");
+        if (modal && modal.classList.contains("open")) renderNews();
+      })
+      .catch(function () {
+        /* the feed is optional */
+      });
+  }
+
+  var NEWS_META = {
+    new_program: { label: "New program", icon: "+", cls: "green" },
+    new_catalog_program: { label: "New in catalog", icon: "+", cls: "amber" },
+    new_asset: { label: "New scope", icon: "+", cls: "blue" },
+    scope_updated: { label: "Scope updated", icon: "±", cls: "blue" },
+    removed_asset: { label: "Scope removed", icon: "−", cls: "red" },
+  };
+
+  function renderNews() {
+    var body = $("#news-body");
+    var sub = $("#news-sub");
+    var events = state.news || [];
+    if (sub) {
+      sub.textContent = events.length
+        ? events.length + " changes across recent crawls"
+        : "";
+    }
+    if (!body) return;
+    if (!events.length) {
+      body.innerHTML =
+        '<div class="news-empty"><h3>No changes recorded yet</h3>' +
+        "<p>honeybee compares every crawl with the previous one. New programs, new scope assets and removed scope will appear here from the next run.</p>" +
+        '<p class="hint">The first crawl is a baseline. That is deliberate: it avoids presenting 2,900 existing programs as if they were new.</p></div>';
+      return;
+    }
+    body.innerHTML = events
+      .map(function (e) {
+        var meta = NEWS_META[e.type] || {
+          label: "Update",
+          icon: "•",
+          cls: "blue",
+        };
+        var href = e.url || "app.html";
+        return (
+          '<a class="news-item" href="' +
+          esc(href) +
+          '" target="_blank" rel="noopener">' +
+          '<span class="news-ico ' +
+          meta.cls +
+          '">' +
+          meta.icon +
+          "</span>" +
+          '<span class="news-text"><b>' +
+          esc(e.name || e.id || "Program") +
+          "</b><small>" +
+          meta.label +
+          (e.detail ? " · " + esc(e.detail) : "") +
+          "</small></span>" +
+          '<span class="news-time">' +
+          esc(when(e.at)) +
+          "</span>" +
+          "</a>"
+        );
+      })
+      .join("");
+  }
+
+  function openNews() {
+    renderNews();
+    $("#news-modal").classList.add("open");
+    document.body.classList.add("modal-open");
+  }
+
+  function closeNews() {
+    var el = $("#news-modal");
+    if (!el) return;
+    el.classList.remove("open");
+    document.body.classList.remove("modal-open");
+  }
+
   function applyHash() {
     var hash = (window.location.hash || "").replace("#", "");
     if (hash === "catalog" && state.tab !== "catalog") {
       setTab("catalog");
+    }
+    if (hash === "news") {
+      openNews();
     }
   }
 
@@ -495,6 +596,15 @@
       return quickMatch(r.program, state.quick);
     });
 
+    if (state.surfaces.size) {
+      rows = rows.filter(function (r) {
+        var counts = window.HBE.surfaceCounts(r.program.scope);
+        return Object.keys(counts).some(function (k) {
+          return state.surfaces.has(k);
+        });
+      });
+    }
+
     if (state.search) {
       var q = state.search.toLowerCase();
       rows = rows.filter(function (r) {
@@ -541,6 +651,34 @@
       r.rank = i + 1;
     });
     return rows;
+  }
+
+  function renderSurfaceCounts() {
+    var counts = {};
+    state.programs.forEach(function (p) {
+      var c = window.HBE.surfaceCounts(p.scope);
+      Object.keys(c).forEach(function (k) {
+        counts[k] = (counts[k] || 0) + 1;
+      });
+    });
+    $$("[data-scnt]").forEach(function (el) {
+      var k = el.getAttribute("data-scnt");
+      el.textContent = counts[k] ? nf(counts[k]) : "0";
+    });
+  }
+
+  function updateSurfaceClear() {
+    var btn = $("#clear-surfaces");
+    if (btn) btn.hidden = state.surfaces.size === 0;
+  }
+
+  function collapseMobileFilters() {
+    try {
+      if (!window.matchMedia("(max-width: 860px)").matches) return;
+      var host = $("#surface-filter");
+      var block = host && host.closest("details");
+      if (block) block.open = false;
+    } catch (e) {}
   }
 
   function setTab(name) {
@@ -1941,6 +2079,30 @@
       render();
     });
 
+    var surfaceFilter = $("#surface-filter");
+    if (surfaceFilter) {
+      surfaceFilter.addEventListener("change", function (e) {
+        var cb = e.target.closest("input[type=checkbox]");
+        if (!cb) return;
+        if (cb.checked) state.surfaces.add(cb.value);
+        else state.surfaces.delete(cb.value);
+        updateSurfaceClear();
+        render();
+      });
+    }
+
+    var clearSurfaces = $("#clear-surfaces");
+    if (clearSurfaces) {
+      clearSurfaces.addEventListener("click", function () {
+        state.surfaces.clear();
+        $$("#surface-filter input[type=checkbox]").forEach(function (cb) {
+          cb.checked = false;
+        });
+        updateSurfaceClear();
+        render();
+      });
+    }
+
     $("#list").addEventListener("click", function (e) {
       if (e.target.closest("a")) return;
       if (e.target.closest(".sel")) return;
@@ -2014,7 +2176,11 @@
 
     document.addEventListener("click", function (e) {
       if (e.target.closest("[data-close-match]")) closeMatch();
+      if (e.target.closest("[data-close-news]")) closeNews();
     });
+
+    var newsBtn = $("#news-btn");
+    if (newsBtn) newsBtn.addEventListener("click", openNews);
 
     var matchBody = $("#match-body");
     if (matchBody) {
@@ -2123,6 +2289,7 @@
         closeModal();
         closeCompare();
         closeMatch();
+        closeNews();
       }
       if (e.key === "/" && document.activeElement !== $("#search")) {
         e.preventDefault();

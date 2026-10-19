@@ -265,9 +265,48 @@ Known source defects (handled, not hidden):
 
 ---
 
+### 2026-10-20 - Splash v2, socials, open data, asset filters, change feed
+- Splash cut to 3 seconds and made a deeper navy (#051733). The big honeycomb
+  logo was removed. The name is now "honeybee" in Dancing Script 700 and the
+  subtitle is Roboto 300 at 66% white. Click or any key still skips it; the
+  reduced-motion path holds 1.2 s.
+- Footer on home and Method: X (@asupasuyo), a GitHub placeholder marked
+  "soon", and Buy Me a Coffee with the cup mark at
+  buymeacoffee.com/onepetaflop.
+- Home: removed the "Example match card" label. Added "What the index shows
+  you", four cards covering why a program fits, comparison, asset filtering and
+  the change feed, plus an open-data band linking programs.json, catalog.json
+  and llms.txt.
+- The 6-hour cadence is now a larger pill in the hero. home.js fills in the age
+  of the last crawl and a countdown to the next rebuild from generated_at.
+- Ranked sidebar: new "Asset types" group with checkboxes for Web, API, Mobile,
+  Network, Cloud, Hardware / IoT, Smart contracts, Source code, AI and Other.
+  Checked categories are OR-ed, counts are per program, and a clear button
+  appears only when a filter is active. Verified: API 14 rows, Cloud 0 rows
+  with the honest empty state, clear returns 221.
+- App bar: the bee avatar is replaced by a "What's new" bell with an unread dot
+  and a #news deep link. The panel lists new programs, new catalog rows, new
+  scope assets, scope updates and removed assets.
+- pipeline/events.py: each run writes data/cache/snapshot.json (program ids,
+  scope asset keys, catalog ids) and diffs the next crawl against it. Events
+  merge into public/data/events.json, newest first, capped at 200. The first
+  run is labelled a baseline instead of calling 2,956 rows new. Scope changes
+  are capped at 4 asset events per program per run.
+- public/llms.txt documents the JSON files, the honest limits, the scoring in
+  one paragraph and the rules for using the data with a model.
+- public/data/events.json was removed from .gitignore so the Action commits it.
+  data/cache stays ignored and is restored by actions/cache.
+- Verified with the built-in browser: asset filter counts and empty state,
+  What's new baseline state and sample rendering, footer links, light and dark
+  home, catalog, and the 29-assertion engine test.
+
+---
+
 ## Next
 
-1. **Phase 4 is done** (catalog layer shipped, see the log above).
-2. **Phase 6** - persist a snapshot per run, diff it, emit `events.json`
-  (new program, scope added, bounty raised, VDP→bounty, paused, report spike).
-3. **Phase 7** - Telegram alerts from the same Actions job.
+1. Phase 6 is done (snapshot diff and events.json shipped, see above).
+2. Phase 7 - Telegram alerts from the same Actions job, keyed on the new event
+   types.
+3. Wire the repo to a GitHub remote and enable Pages plus the 6-hourly Action.
+4. Run a second crawl after the baseline so real scope or catalog changes start
+   appearing in What's new.

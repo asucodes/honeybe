@@ -52,6 +52,26 @@
       .join("");
   }
 
+  function refreshInfo(iso) {
+    var el = document.getElementById("home-refresh");
+    if (!el || !iso) return;
+    var then = new Date(iso).getTime();
+    if (isNaN(then)) return;
+    var mins = Math.max(0, Math.round((Date.now() - then) / 60000));
+    var age;
+    if (mins < 60) age = mins + "m ago";
+    else if (mins < 1440) age = Math.round(mins / 60) + "h ago";
+    else age = Math.round(mins / 1440) + "d ago";
+    var left = Math.max(0, then + 6 * 3600 * 1000 - Date.now());
+    var lh = Math.floor(left / 3600000);
+    var lm = Math.round((left % 3600000) / 60000);
+    var next =
+      left <= 0
+        ? "update due"
+        : "next in " + (lh > 0 ? lh + "h " : "") + lm + "m";
+    el.textContent = "updated " + age + " · " + next;
+  }
+
   fetch("data/programs.json")
     .then(function (r) {
       return r.ok ? r.json() : null;
@@ -62,6 +82,7 @@
       var paid =
         (data.stats && data.stats.will_pay && data.stats.will_pay.green) || 0;
       if (paid) setText("home-paid", nf(paid));
+      refreshInfo(data.generated_at);
       preview(data.programs || []);
     })
     .catch(function () {});

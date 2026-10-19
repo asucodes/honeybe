@@ -63,6 +63,7 @@ def main() -> int:
     )
 
     print("  -> catalog merge")
+    cat = None
     try:
         from .sources import catalog as catalog_source
 
@@ -76,6 +77,16 @@ def main() -> int:
         )
     except Exception as exc:  # a catalog failure must never break the ranking
         print(f"    catalog skipped: {exc}")
+
+    print("  -> change feed")
+    try:
+        from . import events
+
+        feed = events.build(programs, cat, now)
+        label = "baseline" if feed["baseline"] else f"{feed['count']} new events"
+        print(f"    {label}, {feed['total']} stored")
+    except Exception as exc:
+        print(f"    events skipped: {exc}")
 
     elapsed = time.time() - started
     print(f"  ✓ wrote {len(programs)} programs in {elapsed:.1f}s")

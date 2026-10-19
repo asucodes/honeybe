@@ -4,4 +4,3 @@ __pycache__/
 venv/
 .env
 data/cache/
-public/data/events.json

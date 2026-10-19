@@ -1,4 +1,4 @@
-/* Splash: holds for five seconds, then fades. Any click or key skips it.
+/* Splash: holds for three seconds, then fades. Any click or key skips it.
    Reduced-motion users get the same content for 1.2 seconds with no movement. */
 (function () {
   var el = document.getElementById("splash");
@@ -22,5 +22,5 @@
 
   el.addEventListener("click", hide);
   document.addEventListener("keydown", hide);
-  setTimeout(hide, reduce ? 1200 : 5000);
+  setTimeout(hide, reduce ? 1200 : 3000);
 })();

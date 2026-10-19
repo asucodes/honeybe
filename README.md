@@ -30,6 +30,19 @@ under `honeybee.theme`. A `?theme=light` or `?theme=dark` query also works.
 
 Catalog rows are **never** scored. Missing data cannot become a good score.
 
+## What the index gives you
+
+- A **why this is a good match** card for every ranked program: surface share,
+  effective skill, stack match, personal delta and score anatomy.
+- **Compare up to four** programs on score, crowding, response, payout, age and
+  slop risk, with CSV export.
+- **Asset-type filters** for web, API, mobile, network, cloud, hardware and IoT,
+  smart contracts, source code, AI and other. Checked types are OR-ed.
+- A **What's new** feed that diffs each crawl: new scored programs, new catalog
+  rows, scope assets added and scope removed. The first crawl is a baseline.
+- The full catalog and ranked data as **open JSON** for notebooks, RAG indexes
+  or your own agent. `public/llms.txt` describes the files and their limits.
+
 ## Why it is free
 
 No server, no database, no LLM in the loop.
@@ -61,16 +74,18 @@ pipeline/
   normalize.py  # unified schema + dedup
   score.py  # population-level scores
   badges.py  # "Will They Pay?" + AI-slop proxy
+  events.py  # snapshot diff, emits public/data/events.json
   emit.py  # writes public/data/*.json
 public/
   index.html  # home: what it solves, sources, research, live top 5
   app.html  # the index: Ranked + Catalog
   method.html  # method and research
-  app.js  # tabs, filters, table, match cards
+  app.js  # tabs, filters, table, match cards, what's new
   home.js  # live counts and preview on the home page
   page.js  # live counts and coverage figure on the method page
   theme.js  # light/dark theme, stored in localStorage
   engine.js  # personalization module (framework-agnostic)
+  llms.txt  # data guide for models and agents
   logo.svg  # honeycomb mark
 docs/SCORING.md  # formulas + research citations
 ```

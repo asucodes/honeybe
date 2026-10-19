@@ -1,0 +1,64 @@
+# honeybee
+
+honeybee is an open, static bug bounty opportunity index. It ranks programs on
+whether they actually pay, how crowded they are, and whether the scope matches
+a researcher's own skills. It runs from GitHub Pages with a crawl every six
+hours. There is no API key and no account.
+
+## Data files
+
+Paths are relative to the site root.
+
+- data/programs.json: about 220 scored HackerOne programs. Each record has live
+  signals (reports in 90 days, paid in 90 days, response ratios, scope count,
+  age), derived crowding, a score out of 100 with its anatomy, badges (including
+  a "Will They Pay?" tier), and human-readable reasons.
+- data/catalog.json: about 2,950 programs from HackerOne, Bugcrowd, Intigriti,
+  YesWeHack and the lissy93 list, plus direct disclosure pages. Each row has
+  scope count, scope types, coverage flags and a catalog rank. Catalog rows are
+  deliberately not given a payout score.
+- data/events.json: the change feed. New scored programs, new catalog programs,
+  scope assets added and removed, compared across crawls.
+- data/meta.json: crawl metadata, if present.
+
+All files are UTF-8 JSON and are served as static assets.
+
+## Honest limits
+
+- Only HackerOne programs are scored. Other platforms are catalog-only because
+  their public pages do not expose enough free, comparable payout signals.
+- Missing data is never treated as good news. A program with unknown payout or
+  unknown response behaviour is labelled as unknown, not green.
+- Catalog rows with no scope are still listed but carry a coverage percentage
+  and a zero scope count. They are not evidence of a working program.
+- The AI-slop signal is experimental and labelled as such in the UI.
+- Personalization is computed in the browser from localStorage. No profile is
+  sent anywhere.
+
+## Scoring, in one paragraph
+
+The population score combines payout reliability, crowding, scope breadth,
+program age and a penalty for missed responses. Payout reliability dominates.
+Crowding uses reports per asset per month with diminishing returns, following
+the disclosure-volume observations in Maillart et al. (arXiv:1608.03445).
+Personal fit is a bounded adjustment of at most plus or minus 12 points:
+beginner profiles are multiplied by 0.5, intermediate by 0.85, advanced by 1.0,
+and the adjustment is weighted by 0.15 times profile completeness. Every
+adjustment is shown in the interface.
+
+## Using the data with a model
+
+- Fetch the JSON directly; there is no pagination.
+- Treat `score.total` as a population ranking, not a probability of payment.
+- Use `coverage` and `coverage_pct` to decide whether a field is known.
+- Use `events.json` to detect changes instead of re-crawling the sources.
+- Do not infer that a catalog row pays. Check `offers_bounty`, `max_payout`,
+  and the source URL first.
+- Attribution: link back to the honeybee index when republishing substantial
+  parts of the dataset.
+
+## Source code and contact
+
+- Code and issues: GitHub repository (link published with the first push).
+- Updates: https://x.com/asupasuyo
+- Support: https://buymeacoffee.com/onepetaflop

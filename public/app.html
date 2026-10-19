@@ -98,7 +98,19 @@
             />
           </svg>
         </button>
-        <span class="avatar" aria-hidden="true">🐝</span>
+        <button
+          class="icon-btn news-btn"
+          id="news-btn"
+          title="What's new"
+          aria-label="What's new"
+        >
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 22a2.2 2.2 0 0 0 2.2-2.2h-4.4A2.2 2.2 0 0 0 12 22zm6.4-6.4v-5.1c0-3.1-1.9-5.7-4.8-6.4V3.4a1.6 1.6 0 1 0-3.2 0v.7c-2.9.7-4.8 3.3-4.8 6.4v5.1L4 17.3v.9h16v-.9l-1.6-1.7z"
+            />
+          </svg>
+          <span class="news-dot" id="news-dot" hidden></span>
+        </button>
       </div>
     </header>
 
@@ -141,6 +153,55 @@
             </button>
             <button class="quickchip" data-quick="bigscope">
               Large scope <span class="chip-cnt" data-cnt="bigscope"></span>
+            </button>
+          </div>
+        </details>
+
+        <details class="side-block" open>
+          <summary class="side-title">Asset types</summary>
+          <div class="surface-filter" id="surface-filter">
+            <label
+              ><input type="checkbox" value="web" /> Web
+              <span class="chip-cnt" data-scnt="web"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="api" /> API
+              <span class="chip-cnt" data-scnt="api"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="mobile" /> Mobile
+              <span class="chip-cnt" data-scnt="mobile"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="network" /> Network
+              <span class="chip-cnt" data-scnt="network"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="cloud" /> Cloud
+              <span class="chip-cnt" data-scnt="cloud"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="hardware" /> Hardware / IoT
+              <span class="chip-cnt" data-scnt="hardware"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="smart_contract" /> Smart contracts
+              <span class="chip-cnt" data-scnt="smart_contract"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="source" /> Source code
+              <span class="chip-cnt" data-scnt="source"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="ai" /> AI
+              <span class="chip-cnt" data-scnt="ai"></span
+            ></label>
+            <label
+              ><input type="checkbox" value="other" /> Other
+              <span class="chip-cnt" data-scnt="other"></span
+            ></label>
+            <button class="btn ghost sm" id="clear-surfaces" hidden>
+              Clear asset filter
             </button>
           </div>
         </details>
@@ -377,6 +438,25 @@
           <button class="btn ghost sm" id="close-compare">Close</button>
         </div>
         <div id="compare-body"></div>
+      </div>
+    </div>
+
+    <!-- ===================== WHAT'S NEW ===================== -->
+    <div class="modal" id="news-modal">
+      <div class="modal-bg" data-close-news></div>
+      <div
+        class="modal-card news-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="news-title"
+      >
+        <div class="modal-head">
+          <h2 id="news-title">What's new</h2>
+          <span class="news-sub" id="news-sub"></span>
+          <div class="spacer"></div>
+          <button class="btn ghost sm" data-close-news>Close</button>
+        </div>
+        <div id="news-body"></div>
       </div>
     </div>
 
