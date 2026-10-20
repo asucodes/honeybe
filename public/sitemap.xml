@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://honeybe.tech/</loc>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://honeybe.tech/app.html</loc>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://honeybe.tech/method.html</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>
