@@ -339,6 +339,12 @@ Known source defects (handled, not hidden):
 - The first deploy run failed at `configure-pages` with `Resource not
   accessible by integration`. The workflow token cannot create the Pages site.
   Pages must be enabled once in Settings > Pages with source GitHub Actions.
+- Attached the custom domain. https://honeybe.tech now serves the site over
+  HTTPS, and HTTP redirects to HTTPS with Enforce HTTPS enabled. The root path
+  briefly returned a cached GitHub 404 after the domain was attached; a new
+  deploy cleared it. Added `robots.txt` and `sitemap.xml` in the same deploy.
+- Remaining Pages warning: `www.honeybe.tech` has no DNS record. Add a CNAME
+  for `www` to `asucodes.github.io` and click Check again.
 
 ---
 
@@ -347,7 +353,6 @@ Known source defects (handled, not hidden):
 1. Phase 6 is done (snapshot diff and events.json shipped, see above).
 2. Phase 7 - Telegram alerts from the same Actions job, keyed on the new event
    types.
-3. Enable GitHub Pages (Settings > Pages, source GitHub Actions), re-run the
-   deploy workflow, set the custom domain to honeybe.tech, then add the DNS
-   records at the registrar and enforce HTTPS.
+3. Add the `www` CNAME and the remaining three GitHub Pages A records, then
+   verify the www certificate.
 4. Run more crawls so the change feed accumulates real scope and catalog events.

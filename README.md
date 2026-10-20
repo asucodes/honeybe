@@ -4,8 +4,8 @@ Bug bounty opportunity intelligence that ranks programs on whether they pay, how
 
 honeybe collects bug bounty programs from four platforms and two community mirrors, scores the HackerOne set from public signals, and lets you personalize the order in your browser. It is a static site. A GitHub Actions job rebuilds it every six hours and GitHub Pages serves it. There are no accounts, no server, and no paid compute.
 
+- Live site: https://honeybe.tech
 - Repository: https://github.com/asucodes/honeybe
-- Production target: GitHub Pages at https://honeybe.tech
 - Method and research: [public/method.html](public/method.html)
 - Data guide for models and agents: [public/llms.txt](public/llms.txt)
 
