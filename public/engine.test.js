@@ -1,4 +1,4 @@
-/* honeybe engine test harness — run: node engine.test.js
+/* honeybe engine test harness - run: node engine.test.js
  * Pure fixtures, no data dependency. Guards the v2 guarantees:
  * bounded influence, monotonicity, cold start, ramp, migration. */
 

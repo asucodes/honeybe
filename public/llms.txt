@@ -59,6 +59,6 @@ adjustment is shown in the interface.
 
 ## Source code and contact
 
-- Code and issues: GitHub repository (link published with the first push).
+- Code and issues: https://github.com/asucodes/honeybe
 - Updates: https://x.com/asupasuyo
 - Support: https://buymeacoffee.com/onepetaflop

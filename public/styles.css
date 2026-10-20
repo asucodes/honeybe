@@ -2177,7 +2177,7 @@ body.modal-open {
   font-weight: 500;
 }
 .trustbar span::before {
-  content: "âœ“";
+  content: "\2713";
   margin-right: 6px;
   font-weight: 700;
 }
@@ -2949,12 +2949,19 @@ html[data-theme="dark"] .appbar {
   padding: 6px 14px;
 }
 
-.pulse {
-  width: 7px;
-  height: 7px;
+.refresh-ic {
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #8ff0a4;
-  box-shadow: 0 0 0 4px rgba(143, 240, 164, 0.18);
+  background: #1a73e8;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.refresh-ic svg {
+  width: 14px;
+  height: 14px;
+  fill: #ffffff;
 }
 
 .refresh-badge {
