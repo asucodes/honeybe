@@ -333,6 +333,12 @@ Known source defects (handled, not hidden):
 - Normalized the commit authors to asucodes and force-pushed the clean history.
 - Verified: 29 engine assertions, `node --check public/app.js`, the GitHub
   README render, raw screenshot URLs and ten commits across 16 to 20 October.
+- Added `.github/workflows/deploy.yml` (Pages artifact from `public/`, push,
+  crawl completion and manual dispatch), `public/CNAME` for honeybe.tech, and
+  canonical plus Open Graph URL tags on all three pages.
+- The first deploy run failed at `configure-pages` with `Resource not
+  accessible by integration`. The workflow token cannot create the Pages site.
+  Pages must be enabled once in Settings > Pages with source GitHub Actions.
 
 ---
 
@@ -341,6 +347,7 @@ Known source defects (handled, not hidden):
 1. Phase 6 is done (snapshot diff and events.json shipped, see above).
 2. Phase 7 - Telegram alerts from the same Actions job, keyed on the new event
    types.
-3. Enable GitHub Pages, add a deploy step that uploads `public/`, and point
-   honeybe.tech DNS at Pages.
+3. Enable GitHub Pages (Settings > Pages, source GitHub Actions), re-run the
+   deploy workflow, set the custom domain to honeybe.tech, then add the DNS
+   records at the registrar and enforce HTTPS.
 4. Run more crawls so the change feed accumulates real scope and catalog events.
