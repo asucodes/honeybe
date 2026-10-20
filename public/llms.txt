@@ -3,7 +3,8 @@
 honeybe is an open, static bug bounty opportunity index. It ranks programs on
 whether they actually pay, how crowded they are, and whether the scope matches
 a researcher's own skills. It runs from GitHub Pages with a crawl every six
-hours. There is no API key and no account.
+hours. There is no API key and no account. The live site is
+https://honeybe.tech.
 
 ## Data files
 
