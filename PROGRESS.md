@@ -318,6 +318,22 @@ Known source defects (handled, not hidden):
   headers at 1440px and 390px, onboarding logo, source strip, and the live
   change feed (one real Vercel scope event from the latest crawl).
 
+### 2026-10-21 - First public release
+- Published https://github.com/asucodes/honeybe with ten commits dated 16 to
+  20 October 2026: pipeline, personalization, match cards, catalog, change
+  feed, branding and README.
+- Added six screenshots under `docs/screenshots/` and rewrote the README with
+  the ranking summary, data sources, local setup, repository layout and limits.
+- Replaced the green live dot in the six-hour badge with a Material sync icon
+  in a Google blue circle.
+- Pointed every GitHub link in the site, the pipeline user agents and
+  `public/llms.txt` at the public repository.
+- Fixed the method trust bar check marks, which were being decoded as mojibake,
+  with a CSS escape, and corrected the engine test count to 29.
+- Normalized the commit authors to asucodes and force-pushed the clean history.
+- Verified: 29 engine assertions, `node --check public/app.js`, the GitHub
+  README render, raw screenshot URLs and ten commits across 16 to 20 October.
+
 ---
 
 ## Next
@@ -325,6 +341,6 @@ Known source defects (handled, not hidden):
 1. Phase 6 is done (snapshot diff and events.json shipped, see above).
 2. Phase 7 - Telegram alerts from the same Actions job, keyed on the new event
    types.
-3. Wire the repo to a GitHub remote and enable Pages plus the 6-hourly Action.
-4. Run a second crawl after the baseline so real scope or catalog changes start
-   appearing in What's new.
+3. Enable GitHub Pages, add a deploy step that uploads `public/`, and point
+   honeybe.tech DNS at Pages.
+4. Run more crawls so the change feed accumulates real scope and catalog events.
