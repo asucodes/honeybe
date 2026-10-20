@@ -345,6 +345,13 @@ Known source defects (handled, not hidden):
   deploy cleared it. Added `robots.txt` and `sitemap.xml` in the same deploy.
 - Remaining Pages warning: `www.honeybe.tech` has no DNS record. Add a CNAME
   for `www` to `asucodes.github.io` and click Check again.
+- Removed `public/logo.png` entirely. The app bar now uses a bold Kalam 700
+  handwritten wordmark on all three pages, with no mark to its left. The mobile
+  header keeps the wordmark visible instead of hiding it.
+- Added `public/favicon.svg`, a dark blue cursive h on a white tile, and
+  switched every favicon link to it. The onboarding dialog uses the wordmark
+  instead of the bee.
+- Regenerated the six README screenshots with the new wordmark and favicon.
 
 ---
 

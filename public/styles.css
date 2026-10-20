@@ -103,7 +103,6 @@ h4 {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   color: inherit;
   flex-shrink: 0;
@@ -111,22 +110,13 @@ h4 {
 .brand:hover {
   text-decoration: none;
 }
-.brand-mark {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-  border-radius: 7px;
-}
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
 .brand-name {
-  font-size: 21px;
-  font-weight: 500;
+  font-family: "Kalam", "Segoe Script", cursive;
+  font-size: 32px;
+  font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.2px;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
 .appnav {
@@ -2371,19 +2361,14 @@ body.modal-open {
 #onboard .modal-card {
   max-width: 520px;
 }
-.onboard-bee {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 14px;
-}
-.onboard-bee svg {
-  width: 40px;
-  height: 40px;
-}
-.onboard-bee img {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+.onboard-wordmark {
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: "Kalam", "Segoe Script", cursive;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--blue);
+  line-height: 1;
 }
 #onboard h2 {
   text-align: center;
@@ -3846,8 +3831,8 @@ html[data-theme="dark"] .appbar {
     row-gap: 6px;
   }
 
-  .brand-text {
-    display: none;
+  .brand-name {
+    font-size: 28px;
   }
 
   .appnav {
