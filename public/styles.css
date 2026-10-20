@@ -114,9 +114,13 @@ h4 {
   font-family: "Kalam", "Segoe Script", cursive;
   font-size: 32px;
   font-weight: 700;
-  color: var(--ink);
+  color: #0b3d91;
   line-height: 1;
   letter-spacing: 0;
+}
+html[data-theme="dark"] .brand-name,
+html[data-theme="dark"] .onboard-wordmark {
+  color: #8ab4f8;
 }
 
 .appnav {
@@ -2367,7 +2371,7 @@ body.modal-open {
   font-family: "Kalam", "Segoe Script", cursive;
   font-size: 36px;
   font-weight: 700;
-  color: var(--blue);
+  color: #0b3d91;
   line-height: 1;
 }
 #onboard h2 {
