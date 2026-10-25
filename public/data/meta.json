@@ -4,17 +4,17 @@
   "cadence_hours": 6,
   "scoring": "population v1 (HackerOne signals)",
   "slop_experimental": true,
-  "generated_at": "2026-10-24T20:52:24.790044+00:00",
+  "generated_at": "2026-10-25T04:44:49.625512+00:00",
   "stats": {
     "count": 219,
     "score": {
       "min": 0.0,
-      "median": 40.4,
+      "median": 40.5,
       "max": 68.6
     },
     "will_pay": {
-      "green": 98,
-      "yellow": 102,
+      "green": 99,
+      "yellow": 101,
       "red": 19,
       "unknown": 0
     },
